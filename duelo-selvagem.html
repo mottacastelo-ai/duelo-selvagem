@@ -181,6 +181,10 @@
   .status-line{
     text-align:center; color: var(--muted); font-size:14px; margin-top:14px;
   }
+  .debug-line{
+    text-align:center; color: var(--accent-dark); font-size:11px; margin-top:10px;
+    font-family:'IBM Plex Mono', monospace; white-space:pre-line; opacity:0.85;
+  }
 
   /* --- GAME SCREEN --- */
   .score-bar{
@@ -336,6 +340,7 @@
     </div>
     <div class="spinner"></div>
     <div class="status-line" id="waitingStatus">Aguardando o outro jogador entrar&hellip;</div>
+    <div class="debug-line" id="debugWaiting"></div>
   </div>
 
   <!-- SCREEN: CONNECTING (guest) -->
@@ -343,6 +348,7 @@
     <h1 class="title">Conectando&hellip;</h1>
     <div class="spinner"></div>
     <div class="status-line" id="connectingStatus">Entrando na sala</div>
+    <div class="debug-line" id="debugConnecting"></div>
   </div>
 
   <!-- SCREEN: GAME -->
@@ -463,6 +469,24 @@ function myRole(){ return state.role; }
 function oppRole(){ return state.role === 'host' ? 'guest' : 'host'; }
 
 /* ==========================================================================
+   DEBUG NA TELA (para diagnosticar em celular sem DevTools)
+   ========================================================================== */
+const debugState = { channelStatus: '(nenhum)', joinAttempts: 0, joinsReceived: 0 };
+function renderDebug(){
+  const lines = [
+    'papel: ' + (state.role || '-') + ' | sala: ' + (state.roomCode || '-'),
+    'status do canal: ' + debugState.channelStatus
+  ];
+  if(state.role === 'guest') lines.push('tentativas de join enviadas: ' + debugState.joinAttempts);
+  if(state.role === 'host') lines.push('joins recebidos: ' + debugState.joinsReceived);
+  const txt = lines.join('\n');
+  const w = document.getElementById('debugWaiting');
+  const c = document.getElementById('debugConnecting');
+  if(w) w.textContent = txt;
+  if(c) c.textContent = txt;
+}
+
+/* ==========================================================================
    NAVEGAÇÃO DE TELAS
    ========================================================================== */
 const screens = ['home','waiting','connecting','game','end'];
@@ -498,6 +522,7 @@ document.getElementById('btnCreate').addEventListener('click', () => {
 
   document.getElementById('roomCodeDisplay').textContent = state.roomCode;
   showScreen('waiting');
+  renderDebug();
 
   connectChannel(state.roomCode, () => {
     document.getElementById('waitingStatus').textContent = 'Aguardando o outro jogador entrar…';
@@ -519,6 +544,7 @@ document.getElementById('btnJoin').addEventListener('click', () => {
   state.roomCode = code;
 
   showScreen('connecting');
+  renderDebug();
   connectChannel(code, () => {
     document.getElementById('connectingStatus').textContent = 'Conectado. Aguardando o baralho…';
     sendJoinWithRetry();
@@ -535,7 +561,9 @@ function sendJoinWithRetry(){
   state.joinAckd = false;
   const attempt = () => {
     if(state.joinAckd) return;
-    console.log('[Duelo Selvagem] enviando join para a sala', state.roomCode);
+    debugState.joinAttempts++;
+    renderDebug();
+    console.log('[Duelo Selvagem] enviando join para a sala', state.roomCode, '(tentativa ' + debugState.joinAttempts + ')');
     state.channel.send({
       type: 'broadcast',
       event: 'join',
@@ -558,6 +586,8 @@ function connectChannel(code, onReady){
   channel.on('broadcast', { event: 'join' }, ({ payload }) => {
     console.log('[Duelo Selvagem] evento join recebido:', payload);
     if(state.role !== 'host') return;
+    debugState.joinsReceived++;
+    renderDebug();
     state.oppName = payload.name;
     // idempotente: se o guest reenviar 'join' (porque não recebeu o 'deal'
     // anterior — broadcast não garante entrega), reenviamos o mesmo baralho
@@ -599,6 +629,8 @@ function connectChannel(code, onReady){
 
   channel.subscribe((status, err) => {
     console.log('[Duelo Selvagem] status do canal:', status, err || '');
+    debugState.channelStatus = status + (err ? ' (' + err.message + ')' : '');
+    renderDebug();
     if(status === 'SUBSCRIBED'){
       onReady();
     } else if(status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED'){
