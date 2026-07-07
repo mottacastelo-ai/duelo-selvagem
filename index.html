@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Duelo Selvagem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root{
+    --bg: #12261C;
+    --surface: #1B3327;
+    --surface-2: #223D30;
+    --card-bg: #F4ECD8;
+    --card-border: #C9B383;
+    --ink: #1E2A22;
+    --paper-ink: #EDEADE;
+    --accent: #C98A2B;
+    --accent-dark: #9C6B1D;
+    --win: #B3401D;
+    --muted: #7C9686;
+    --danger: #7A2E2E;
+  }
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    background: radial-gradient(120% 140% at 50% -10%, #1A3328 0%, #0E1F17 65%, #0A1810 100%);
+    color: var(--paper-ink);
+    font-family: 'Work Sans', sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    overflow-x:hidden;
+  }
+  .app{
+    width:100%;
+    max-width:480px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    padding: 20px 20px 32px;
+  }
+  .brand{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin: 6px 0 28px;
+  }
+  .brand-mark{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-weight:800;
+    font-size: 15px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    text-transform:uppercase;
+  }
+  .brand-sub{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color: var(--muted);
+    letter-spacing:0.05em;
+  }
+  h1.title{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-weight:800;
+    font-size: 40px;
+    line-height:0.98;
+    letter-spacing:-0.01em;
+    margin: 0 0 6px;
+  }
+  .title em{
+    font-style:normal;
+    color: var(--accent);
+  }
+  .lede{
+    color: var(--muted);
+    font-size:15px;
+    line-height:1.5;
+    margin: 0 0 32px;
+    max-width: 34ch;
+  }
+  .screen{ flex:1; display:flex; flex-direction:column; }
+
+  /* --- FORM ELEMENTS --- */
+  .field{ margin-bottom:16px; }
+  .field label{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color: var(--muted);
+    margin-bottom:8px;
+  }
+  input[type="text"]{
+    width:100%;
+    background: var(--surface);
+    border: 1px solid var(--surface-2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: var(--paper-ink);
+    font-family:'Work Sans', sans-serif;
+    font-size:16px;
+    outline:none;
+  }
+  input[type="text"]:focus{ border-color: var(--accent); }
+  input.code-input{
+    font-family:'IBM Plex Mono', monospace;
+    letter-spacing: 0.35em;
+    text-transform:uppercase;
+    font-size:22px;
+    text-align:center;
+  }
+  .btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    width:100%;
+    border:none;
+    border-radius:12px;
+    padding:16px 20px;
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:16px;
+    cursor:pointer;
+    transition: transform .08s ease, opacity .15s ease;
+  }
+  .btn:active{ transform: scale(0.98); }
+  .btn:disabled{ opacity:0.4; cursor:not-allowed; }
+  .btn-primary{ background: var(--accent); color: #1B1206; }
+  .btn-ghost{
+    background: transparent;
+    border: 1px solid var(--surface-2);
+    color: var(--paper-ink);
+  }
+  .btn-row{ display:flex; flex-direction:column; gap:12px; margin-top:8px; }
+  .divider{
+    display:flex; align-items:center; gap:12px;
+    color: var(--muted); font-size:12px; margin: 26px 0;
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .divider::before, .divider::after{
+    content:''; flex:1; height:1px; background: var(--surface-2);
+  }
+
+  /* --- WAITING / ROOM CODE --- */
+  .code-display{
+    background: var(--surface);
+    border: 1px dashed var(--accent-dark);
+    border-radius: 14px;
+    padding: 22px;
+    text-align:center;
+    margin: 12px 0 20px;
+  }
+  .code-display .code{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 40px;
+    font-weight:600;
+    letter-spacing:0.2em;
+    color:#fff;
+  }
+  .code-display .hint{
+    color: var(--muted);
+    font-size:12px;
+    margin-top:6px;
+  }
+  .spinner{
+    width:22px; height:22px;
+    border-radius:50%;
+    border: 3px solid var(--surface-2);
+    border-top-color: var(--accent);
+    animation: spin 0.8s linear infinite;
+    margin: 18px auto 0;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  .status-line{
+    text-align:center; color: var(--muted); font-size:14px; margin-top:14px;
+  }
+
+  /* --- GAME SCREEN --- */
+  .score-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin-bottom: 18px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+  }
+  .score-side{ display:flex; align-items:center; gap:8px; }
+  .score-name{ color: var(--muted); }
+  .score-count{ color:#fff; font-weight:600; font-size:16px; }
+  .score-vs{ color: var(--accent-dark); font-weight:600; }
+  .pot-note{
+    text-align:center; font-size:11px; color: var(--accent);
+    font-family:'IBM Plex Mono', monospace; margin: -10px 0 14px;
+    min-height:14px;
+  }
+
+  .card{
+    background: var(--card-bg);
+    border-radius: 18px;
+    border: 1px solid var(--card-border);
+    padding: 22px 20px 18px;
+    color: var(--ink);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:6px;
+    background: linear-gradient(90deg, var(--accent), var(--win));
+  }
+  .card-alpha-tag{
+    position:absolute; top:14px; right:16px;
+    background: var(--win); color:#fff;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px; letter-spacing:0.08em;
+    padding:4px 8px; border-radius:6px;
+    text-transform:uppercase;
+  }
+  .card-emoji{ font-size: 56px; line-height:1; margin-bottom:6px; }
+  .card-name{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-weight:800; font-size:26px; margin:0 0 2px;
+  }
+  .card-species{
+    font-size:12px; color:#5c6b5f; font-style:italic; margin-bottom:16px;
+  }
+  .attr-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 11px 0;
+    border-top: 1px solid #E3D9BE;
+  }
+  .attr-row:last-child{ border-bottom: 1px solid #E3D9BE; }
+  .attr-label{ font-size:14px; color:#4a5a4d; }
+  .attr-value{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:600; font-size:16px;
+  }
+  .attr-row.pickable{ cursor:pointer; }
+  .attr-row.pickable .attr-value{
+    background: var(--accent);
+    color:#1B1206;
+    padding: 4px 10px;
+    border-radius:8px;
+  }
+  .attr-row.chosen{ background: rgba(201,138,43,0.15); border-radius:8px; }
+  .attr-row.win .attr-value{ background: var(--win); color:#fff; }
+  .attr-row.lose .attr-value{ background:#ddd2b3; color:#8a8065; }
+
+  .turn-banner{
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px; letter-spacing:0.06em; text-transform:uppercase;
+    color: var(--muted);
+    margin: 16px 0 10px;
+  }
+  .turn-banner.mine{ color: var(--accent); }
+
+  .result-panel{
+    margin-top:16px;
+    background: var(--surface);
+    border-radius:14px;
+    padding:16px;
+    text-align:center;
+    font-size:14px;
+  }
+  .result-panel .big{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-weight:800; font-size:20px; margin-bottom:6px;
+  }
+  .hidden{ display:none !important; }
+
+  .end-emoji{ font-size:64px; text-align:center; margin: 30px 0 6px; }
+  .footer-note{
+    margin-top:auto; padding-top:24px;
+    text-align:center; font-size:11px; color: var(--muted);
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .name-tag{ font-size:12px; color: var(--muted); }
+  .toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    background:#2A1414; border:1px solid var(--danger);
+    color:#f2d9d9; padding:12px 18px; border-radius:10px;
+    font-size:13px; max-width:90%; text-align:center; z-index:50;
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <div class="brand">
+    <span class="brand-mark">Duelo Selvagem</span>
+    <span class="brand-sub">v0.1 &middot; teste</span>
+  </div>
+
+  <!-- SCREEN: HOME -->
+  <div class="screen" id="screen-home">
+    <h1 class="title">Quem manda<br><em>na savana?</em></h1>
+    <p class="lede">Um duelo de cartas de animais para dois jogadores, cada um no seu celular. Crie uma sala ou entre com o código de quem já criou.</p>
+
+    <div class="field">
+      <label for="playerName">Seu nome</label>
+      <input type="text" id="playerName" maxlength="16" placeholder="Ex: Léo">
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnCreate">Criar sala</button>
+    </div>
+
+    <div class="divider">ou</div>
+
+    <div class="field">
+      <label for="joinCode">Código da sala</label>
+      <input type="text" id="joinCode" class="code-input" maxlength="4" placeholder="XXXX">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="btnJoin">Entrar na sala</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: WAITING (host) -->
+  <div class="screen hidden" id="screen-waiting">
+    <h1 class="title">Sala criada</h1>
+    <p class="lede">Peça para o outro jogador abrir o link e digitar este código na tela dele.</p>
+    <div class="code-display">
+      <div class="code" id="roomCodeDisplay">----</div>
+      <div class="hint">código da sala</div>
+    </div>
+    <div class="spinner"></div>
+    <div class="status-line" id="waitingStatus">Aguardando o outro jogador entrar&hellip;</div>
+  </div>
+
+  <!-- SCREEN: CONNECTING (guest) -->
+  <div class="screen hidden" id="screen-connecting">
+    <h1 class="title">Conectando&hellip;</h1>
+    <div class="spinner"></div>
+    <div class="status-line" id="connectingStatus">Entrando na sala</div>
+  </div>
+
+  <!-- SCREEN: GAME -->
+  <div class="screen hidden" id="screen-game">
+    <div class="score-bar">
+      <div class="score-side">
+        <span class="score-name" id="meLabel">Você</span>
+        <span class="score-count" id="myCount">0</span>
+      </div>
+      <span class="score-vs">vs</span>
+      <div class="score-side">
+        <span class="score-count" id="oppCount">0</span>
+        <span class="score-name" id="oppLabel">Adversário</span>
+      </div>
+    </div>
+    <div class="pot-note" id="potNote"></div>
+
+    <div class="turn-banner" id="turnBanner">&mdash;</div>
+
+    <div class="card" id="cardBox">
+      <div class="card-alpha-tag hidden" id="alphaTag">Carta Alfa</div>
+      <div class="card-emoji" id="cardEmoji">🐾</div>
+      <div class="card-name" id="cardName">&nbsp;</div>
+      <div class="card-species" id="cardSpecies">&nbsp;</div>
+      <div id="attrList"></div>
+    </div>
+
+    <div class="result-panel hidden" id="resultPanel">
+      <div class="big" id="resultBig"></div>
+      <div id="resultDetail"></div>
+    </div>
+  </div>
+
+  <!-- SCREEN: END -->
+  <div class="screen hidden" id="screen-end">
+    <div class="end-emoji" id="endEmoji">🏆</div>
+    <h1 class="title" style="text-align:center" id="endTitle">Fim de jogo</h1>
+    <p class="lede" style="text-align:center; margin-left:auto; margin-right:auto" id="endSubtitle"></p>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnReplay">Jogar de novo</button>
+    </div>
+  </div>
+
+  <div class="footer-note">feito por Léo &middot; baralho de teste (4 cartas)</div>
+</div>
+
+<script>
+/* ==========================================================================
+   CONFIG
+   ========================================================================== */
+const SUPABASE_URL = 'https://fdyjquhwbmsqgiwsyenn.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_CLo9EY8vv36kwdDaDhOihw_o4pCKPyM';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* ==========================================================================
+   BARALHO DE TESTE (4 animais, dados verificados)
+   Fontes: National Geographic, Smithsonian National Zoo, WWF, Wikipedia.
+   Atributos: maior valor sempre vence.
+   TODO: expandir para 32 animais em lotes verificados.
+   ========================================================================== */
+const DECK = [
+  {
+    id: 'guepardo', name: 'Guepardo', species: 'Acinonyx jubatus', emoji: '🐆',
+    attrs: { peso_kg: 50, velocidade_kmh: 104, expectativa_anos: 12 }
+  },
+  {
+    id: 'elefante', name: 'Elefante-africano', species: 'Loxodonta africana', emoji: '🐘',
+    attrs: { peso_kg: 6000, velocidade_kmh: 40, expectativa_anos: 65 }
+  },
+  {
+    id: 'leao', name: 'Leão', species: 'Panthera leo', emoji: '🦁',
+    attrs: { peso_kg: 190, velocidade_kmh: 80, expectativa_anos: 13 }
+  },
+  {
+    id: 'girafa', name: 'Girafa', species: 'Giraffa camelopardalis', emoji: '🦒',
+    attrs: { peso_kg: 1200, velocidade_kmh: 55, expectativa_anos: 22 }
+  }
+];
+
+const ATTR_LABELS = {
+  peso_kg: 'Peso (kg)',
+  velocidade_kmh: 'Velocidade máx. (km/h)',
+  expectativa_anos: 'Expectativa de vida (anos)'
+};
+const ATTR_ORDER = ['peso_kg', 'velocidade_kmh', 'expectativa_anos'];
+
+function shuffledDeck(){
+  const d = DECK.slice();
+  for(let i = d.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [d[i], d[j]] = [d[j], d[i]];
+  }
+  return d;
+}
+
+/* ==========================================================================
+   ESTADO
+   ========================================================================== */
+const state = {
+  role: null,        // 'host' | 'guest'
+  roomCode: null,
+  channel: null,
+  myName: 'Você',
+  oppName: 'Adversário',
+  myPile: [],
+  oppCount: 0,
+  pot: [],
+  turn: null,        // 'host' | 'guest'
+  myChoice: null,    // {attribute, value}
+  oppChoice: null,   // {attribute, value}
+  resolving: false,
+  dealt: false,      // host: já mandou o 'deal'? (permite reenviar se receber 'join' de novo)
+  joinAckd: false,   // guest: já recebeu o 'deal'? (permite parar de reenviar 'join')
+  joinRetryTimer: null
+};
+
+function myRole(){ return state.role; }
+function oppRole(){ return state.role === 'host' ? 'guest' : 'host'; }
+
+/* ==========================================================================
+   NAVEGAÇÃO DE TELAS
+   ========================================================================== */
+const screens = ['home','waiting','connecting','game','end'];
+function showScreen(name){
+  screens.forEach(s => {
+    document.getElementById('screen-' + s).classList.toggle('hidden', s !== name);
+  });
+}
+
+function toast(msg){
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+}
+
+function randomCode(){
+  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // sem O/0/I/1 pra evitar confusão
+  let c = '';
+  for(let i=0;i<4;i++) c += chars[Math.floor(Math.random()*chars.length)];
+  return c;
+}
+
+/* ==========================================================================
+   CRIAR SALA (HOST)
+   ========================================================================== */
+document.getElementById('btnCreate').addEventListener('click', () => {
+  const name = document.getElementById('playerName').value.trim();
+  state.myName = name || 'Jogador 1';
+  state.role = 'host';
+  state.roomCode = randomCode();
+
+  document.getElementById('roomCodeDisplay').textContent = state.roomCode;
+  showScreen('waiting');
+
+  connectChannel(state.roomCode, () => {
+    document.getElementById('waitingStatus').textContent = 'Aguardando o outro jogador entrar…';
+  });
+});
+
+/* ==========================================================================
+   ENTRAR NA SALA (GUEST)
+   ========================================================================== */
+document.getElementById('btnJoin').addEventListener('click', () => {
+  const name = document.getElementById('playerName').value.trim();
+  const code = document.getElementById('joinCode').value.trim().toUpperCase();
+  if(code.length !== 4){
+    toast('Digite o código de 4 caracteres da sala.');
+    return;
+  }
+  state.myName = name || 'Jogador 2';
+  state.role = 'guest';
+  state.roomCode = code;
+
+  showScreen('connecting');
+  connectChannel(code, () => {
+    document.getElementById('connectingStatus').textContent = 'Conectado. Aguardando o baralho…';
+    sendJoinWithRetry();
+  });
+});
+
+/* ==========================================================================
+   RETRY DO 'join' (broadcast não garante entrega: se o host ainda não
+   tiver terminado de se inscrever no canal no instante do envio, a
+   mensagem some sem erro nenhum. Reenviamos periodicamente até o host
+   confirmar com 'deal'.)
+   ========================================================================== */
+function sendJoinWithRetry(){
+  state.joinAckd = false;
+  const attempt = () => {
+    if(state.joinAckd) return;
+    console.log('[Duelo Selvagem] enviando join para a sala', state.roomCode);
+    state.channel.send({
+      type: 'broadcast',
+      event: 'join',
+      payload: { name: state.myName }
+    });
+  };
+  attempt();
+  state.joinRetryTimer = setInterval(attempt, 1500);
+}
+
+/* ==========================================================================
+   CANAL REALTIME
+   ========================================================================== */
+function connectChannel(code, onReady){
+  const channel = sb.channel('game-' + code, {
+    config: { broadcast: { self: false } }
+  });
+  state.channel = channel;
+
+  channel.on('broadcast', { event: 'join' }, ({ payload }) => {
+    console.log('[Duelo Selvagem] evento join recebido:', payload);
+    if(state.role !== 'host') return;
+    state.oppName = payload.name;
+    // idempotente: se o guest reenviar 'join' (porque não recebeu o 'deal'
+    // anterior — broadcast não garante entrega), reenviamos o mesmo baralho
+    // já sorteado em vez de sortear de novo.
+    if(state.dealt){
+      resendDeal();
+    } else {
+      dealAndStart();
+    }
+  });
+
+  channel.on('broadcast', { event: 'deal' }, ({ payload }) => {
+    console.log('[Duelo Selvagem] evento deal recebido:', payload);
+    if(state.role !== 'guest') return;
+    if(state.joinRetryTimer){
+      clearInterval(state.joinRetryTimer);
+      state.joinRetryTimer = null;
+    }
+    if(state.joinAckd) return; // já processamos o primeiro 'deal'; ignora reenvios
+    state.joinAckd = true;
+    state.oppName = payload.hostName;
+    state.myPile = payload.guestPile;
+    state.oppCount = payload.hostPileCount;
+    state.turn = payload.turn;
+    startGameScreen();
+  });
+
+  channel.on('broadcast', { event: 'choose' }, ({ payload }) => {
+    onOpponentChoose(payload);
+  });
+
+  channel.on('broadcast', { event: 'reveal' }, ({ payload }) => {
+    onOpponentReveal(payload);
+  });
+
+  channel.on('broadcast', { event: 'rematch' }, () => {
+    toast(state.oppName + ' quer jogar de novo. Recarregue a página para uma nova sala.');
+  });
+
+  channel.subscribe((status, err) => {
+    console.log('[Duelo Selvagem] status do canal:', status, err || '');
+    if(status === 'SUBSCRIBED'){
+      onReady();
+    } else if(status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED'){
+      const msg = 'Falha na conexão (' + status + ')' + (err ? ': ' + err.message : '');
+      toast(msg);
+      const waitingStatus = document.getElementById('waitingStatus');
+      const connectingStatus = document.getElementById('connectingStatus');
+      if(waitingStatus) waitingStatus.textContent = msg;
+      if(connectingStatus) connectingStatus.textContent = msg;
+    }
+  });
+}
+
+/* ==========================================================================
+   DISTRIBUIÇÃO DE CARTAS (executada pelo HOST)
+   ========================================================================== */
+function dealAndStart(){
+  const deck = shuffledDeck();
+  const half = Math.floor(deck.length / 2);
+  const hostPile = deck.slice(0, half);
+  const guestPile = deck.slice(half);
+
+  state.myPile = hostPile;
+  state.oppCount = guestPile.length;
+  state.turn = 'host'; // host sempre inicia nesta versão
+
+  state.dealtGuestPile = guestPile; // guardado para poder reenviar se o guest não confirmar
+  state.dealt = true;
+
+  state.channel.send({
+    type: 'broadcast',
+    event: 'deal',
+    payload: {
+      hostName: state.myName,
+      guestPile: guestPile,
+      hostPileCount: hostPile.length,
+      turn: 'host'
+    }
+  });
+
+  startGameScreen();
+}
+
+function resendDeal(){
+  console.log('[Duelo Selvagem] reenviando deal (guest reenviou join)');
+  state.channel.send({
+    type: 'broadcast',
+    event: 'deal',
+    payload: {
+      hostName: state.myName,
+      guestPile: state.dealtGuestPile,
+      hostPileCount: state.myPile.length,
+      turn: state.turn
+    }
+  });
+}
+
+/* ==========================================================================
+   TELA DE JOGO
+   ========================================================================== */
+function startGameScreen(){
+  showScreen('game');
+  document.getElementById('meLabel').textContent = state.myName;
+  document.getElementById('oppLabel').textContent = state.oppName;
+  renderGame();
+}
+
+function renderGame(){
+  document.getElementById('myCount').textContent = state.myPile.length;
+  document.getElementById('oppCount').textContent = state.oppCount;
+  document.getElementById('potNote').textContent = state.pot.length > 0
+    ? ('Empate! ' + state.pot.length + ' carta(s) acumulada(s) na mesa.')
+    : '';
+
+  const card = state.myPile[0];
+  const alphaTag = document.getElementById('alphaTag');
+  if(!card){ return; }
+
+  document.getElementById('cardEmoji').textContent = card.emoji;
+  document.getElementById('cardName').textContent = card.name;
+  document.getElementById('cardSpecies').textContent = card.species;
+  alphaTag.classList.add('hidden');
+
+  const isMyTurn = state.turn === myRole();
+  const banner = document.getElementById('turnBanner');
+  banner.textContent = isMyTurn ? 'Sua vez de escolher' : 'Vez de ' + state.oppName;
+  banner.classList.toggle('mine', isMyTurn);
+
+  const list = document.getElementById('attrList');
+  list.innerHTML = '';
+  ATTR_ORDER.forEach(attr => {
+    const row = document.createElement('div');
+    row.className = 'attr-row' + (isMyTurn && !state.resolving ? ' pickable' : '');
+    row.innerHTML =
+      '<span class="attr-label">' + ATTR_LABELS[attr] + '</span>' +
+      '<span class="attr-value">' + card.attrs[attr] + '</span>';
+    if(isMyTurn && !state.resolving){
+      row.addEventListener('click', () => chooseAttribute(attr));
+    }
+    list.appendChild(row);
+  });
+
+  document.getElementById('resultPanel').classList.add('hidden');
+}
+
+/* ==========================================================================
+   LÓGICA DE RODADA
+   ========================================================================== */
+function cardById(id){
+  return DECK.find(c => c.id === id);
+}
+
+function chooseAttribute(attr){
+  if(state.resolving) return;
+  const card = state.myPile[0];
+  const value = card.attrs[attr];
+  state.myChoice = { attribute: attr, value: value, cardId: card.id };
+  state.resolving = true;
+
+  state.channel.send({
+    type: 'broadcast',
+    event: 'choose',
+    payload: { attribute: attr, value: value, cardId: card.id }
+  });
+
+  renderGame();
+  document.getElementById('turnBanner').textContent = 'Você escolheu: ' + ATTR_LABELS[attr];
+}
+
+function onOpponentChoose(payload){
+  // eu NÃO sou quem escolheu: leio meu próprio valor pro mesmo atributo e devolvo
+  state.resolving = true;
+  const myCard = state.myPile[0];
+  const myValue = myCard.attrs[payload.attribute];
+  state.oppChoice = { attribute: payload.attribute, value: payload.value, cardId: payload.cardId };
+  state.myChoice = { attribute: payload.attribute, value: myValue, cardId: myCard.id };
+
+  state.channel.send({
+    type: 'broadcast',
+    event: 'reveal',
+    payload: { attribute: payload.attribute, value: myValue, cardId: myCard.id }
+  });
+
+  resolveRound();
+}
+
+function onOpponentReveal(payload){
+  // eu SOU quem escolheu: recebo o valor do adversário
+  state.oppChoice = { attribute: payload.attribute, value: payload.value, cardId: payload.cardId };
+  resolveRound();
+}
+
+function resolveRound(){
+  if(!state.myChoice || !state.oppChoice) return;
+
+  const attr = state.myChoice.attribute;
+  const myVal = state.myChoice.value;
+  const oppVal = state.oppChoice.value;
+
+  const myCard = state.myPile.shift();
+  const oppCard = cardById(state.oppChoice.cardId);
+
+  let outcome; // 'win' | 'lose' | 'tie'
+  if(myVal > oppVal) outcome = 'win';
+  else if(myVal < oppVal) outcome = 'lose';
+  else outcome = 'tie';
+
+  showRoundResult(myCard, attr, myVal, oppVal, outcome);
+
+  if(outcome === 'tie'){
+    // as duas cartas ficam "presas" na mesa até alguém vencer uma rodada seguinte.
+    // guardamos as DUAS cartas reais (a minha e a cópia da do adversário, via lookup
+    // no baralho compartilhado) para que, quando o pote for reclamado, nenhuma carta suma.
+    state.pot.push(myCard, oppCard);
+    state.oppCount -= 1; // só a carta dele desta rodada sai do monte ativo dele
+  } else if(outcome === 'win'){
+    // eu ganho: minha carta + carta do adversário desta rodada + pote inteiro (já com as
+    // cartas de ambos os lados de empates anteriores) vão pro fim do meu monte
+    state.myPile.push(myCard, oppCard);
+    state.pot.forEach(c => state.myPile.push(c));
+    state.pot = [];
+    state.oppCount -= 1; // só a carta dele desta rodada; o pote dele já foi descontado nos empates
+    state.turn = myRole();
+  } else {
+    // eu perco: minha carta desta rodada + o pote inteiro vão pro monte do adversário.
+    // a carta dele desta rodada volta pro monte dele (sem alterar a contagem).
+    state.oppCount += 1 + state.pot.length;
+    state.pot = [];
+    state.turn = oppRole();
+  }
+
+  state.myChoice = null;
+  state.oppChoice = null;
+
+  setTimeout(() => {
+    state.resolving = false;
+    checkGameOver();
+  }, 1800);
+}
+
+function showRoundResult(myCard, attr, myVal, oppVal, outcome){
+  const panel = document.getElementById('resultPanel');
+  panel.classList.remove('hidden');
+  const label = ATTR_LABELS[attr];
+  let text;
+  if(outcome === 'win') text = 'Você venceu a rodada! 🎉';
+  else if(outcome === 'lose') text = state.oppName + ' venceu a rodada.';
+  else text = 'Empate — cartas ficam na mesa.';
+  document.getElementById('resultBig').textContent = text;
+  document.getElementById('resultDetail').textContent =
+    label + ': você ' + myVal + '  ×  ' + oppVal + ' ' + state.oppName;
+}
+
+function checkGameOver(){
+  if(state.myPile.length === 0){
+    endGame(false);
+  } else if(state.oppCount <= 0){
+    endGame(true);
+  } else {
+    renderGame();
+  }
+}
+
+function endGame(iWon){
+  showScreen('end');
+  document.getElementById('endEmoji').textContent = iWon ? '🏆' : '🐾';
+  document.getElementById('endTitle').textContent = iWon ? 'Você venceu!' : (state.oppName + ' venceu!');
+  document.getElementById('endSubtitle').textContent = iWon
+    ? 'Você ficou com todas as cartas do baralho.'
+    : (state.oppName + ' ficou com todas as cartas do baralho. Bora revanche?');
+}
+
+document.getElementById('btnReplay').addEventListener('click', () => {
+  if(state.channel){
+    state.channel.send({ type: 'broadcast', event: 'rematch', payload: {} });
+  }
+  location.reload();
+});
+</script>
+</body>
+</html>
