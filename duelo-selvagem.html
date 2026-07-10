@@ -524,7 +524,7 @@
     </div>
   </div>
 
-  <div class="footer-note">feito por Léo &middot; baralho de teste (4 cartas)</div>
+  <div class="footer-note">feito por Léo &middot; baralho de teste (14 cartas)</div>
 </div>
 
 <script>
@@ -648,6 +648,261 @@ const DECK = [
         'Dorme muito pouco — geralmente menos de 2 horas por dia, quase sempre em pé.'
       ],
       fontes: 'Wikipédia, Save Giraffes Now, San Diego Zoo Wildlife Alliance, Giraffe Conservation Foundation'
+    }
+  },
+  {
+    id: 'orca', name: 'Orca', species: 'Orcinus orca', emoji: '🐋',
+    attrs: { peso_kg: 9000, velocidade_kmh: 56, expectativa_anos: 50, altura_cm: 980, populacao_estimada: 50000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/3/37/Killerwhales_jumping.jpg',
+      author: 'Robert Pittman / NOAA', license: 'Domínio público'
+    },
+    sound: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/7/79/Killer_whale.ogg',
+      description: 'chamados vocais e ecolocalização', author: 'National Park Service (EUA)', license: 'Domínio público'
+    },
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Orca',
+    info: {
+      habitat: 'É encontrada em praticamente todos os oceanos do mundo, dos polos ao equador, mas prefere águas frias, temperadas e costeiras — uma das distribuições geográficas mais amplas entre todos os mamíferos.',
+      alimentacao: 'Predadora de topo e carnívora generalista: come peixes, lulas, tubarões, aves marinhas, tartarugas e outros mamíferos marinhos, como focas, leões-marinhos e até outras baleias. Um adulto come cerca de 220 kg de alimento por dia.',
+      comportamento: 'Vive em grupos familiares ("pods") com sistema matriarcal complexo — os filhotes machos costumam ficar com a mãe a vida toda. Cada grupo tem dialetos vocais e técnicas de caça próprios, passados entre gerações.',
+      conservacao: 'Classificada como "Dados Deficientes" pela IUCN — não porque esteja necessariamente segura, mas porque os diferentes grupos de orca ao redor do mundo podem ser espécies distintas ainda não separadas taxonomicamente. Populações locais específicas, como as do Pacífico Noroeste dos EUA, são criticamente ameaçadas.',
+      curiosidades: [
+        'Apesar do apelido "baleia assassina", a orca é tecnicamente o maior golfinho do mundo.',
+        'Não há registro de ataque fatal de orca a humano em estado selvagem.',
+        'Algumas populações se lançam propositalmente na praia para capturar filhotes de foca, e depois voltam à água.',
+        'Fêmeas passam por menopausa e podem viver décadas após parar de se reproduzir — raro entre mamíferos.',
+        'A nadadeira dorsal dos machos pode chegar a 1,8 m de altura, a maior de qualquer cetáceo em proporção ao corpo.'
+      ],
+      fontes: 'NOAA Fisheries, Wikipédia, National Geographic'
+    }
+  },
+  {
+    id: 'golfinho', name: 'Golfinho-roaz', species: 'Tursiops truncatus', emoji: '🐬',
+    attrs: { peso_kg: 300, velocidade_kmh: 35, expectativa_anos: 40, altura_cm: 380, populacao_estimada: 600000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/1/10/Tursiops_truncatus_01.jpg',
+      author: 'NASA', license: 'Domínio público'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Golfinho-roaz',
+    info: {
+      habitat: 'Vive em oceanos temperados e tropicais no mundo todo, de águas costeiras rasas a mar aberto. No Brasil, há populações residentes conhecidas, como na Lagoa dos Patos (RS).',
+      alimentacao: 'Carnívoro — come peixes de fundo, enguias, lulas e camarões. Usa ecolocalização (cliques sonoros) para localizar presas, cercando cardumes e caçando um a um.',
+      comportamento: 'Vive em grupos ("pods") de 2 a 15 indivíduos, mas grupos podem passar de 100. Fêmeas modificam o assobio ao se dirigir a filhotes, de um jeito parecido com o "manhês" humano.',
+      conservacao: 'Classificado como "Pouco Preocupante" pela IUCN. A principal ameaça é a captura acidental em redes de pesca comercial (bycatch), especialmente redes de atum.',
+      curiosidades: [
+        'Reconhece o assobio de outros golfinhos mesmo depois de mais de 20 anos separados — uma das memórias sociais mais longas já documentadas fora dos humanos.',
+        'Consegue emitir até 1.000 cliques de ecolocalização por segundo.',
+        'Tem 5 das 7 vértebras cervicais desfusionadas, o que dá ao pescoço flexibilidade incomum entre golfinhos.',
+        'Consegue saltar até 6 metros de altura fora d’água.',
+        'Filhotes ficam de 3 a 6 anos dependentes da mãe — um dos períodos mais longos entre mamíferos marinhos.'
+      ],
+      fontes: 'NOAA Fisheries, National Geographic, Wikipédia'
+    }
+  },
+  {
+    id: 'baleia_azul', name: 'Baleia-azul', species: 'Balaenoptera musculus', emoji: '🐳',
+    attrs: { peso_kg: 136000, velocidade_kmh: 27, expectativa_anos: 85, altura_cm: 3000, populacao_estimada: 10000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/1/1c/Anim1754_-_Flickr_-_NOAA_Photo_Library.jpg',
+      author: 'NOAA Photo Library', license: 'Domínio público'
+    },
+    sound: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/8/85/Blue_whale_atlantic1.ogg',
+      description: 'vocalização gravada no Atlântico', author: 'NOAA', license: 'Domínio público'
+    },
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Baleia-azul',
+    info: {
+      habitat: 'Vive em todos os oceanos do mundo, exceto o Ártico e o Mar de Bering — hoje encontrada principalmente no Atlântico Norte, Pacífico Norte, Antártica e Oceano Índico.',
+      alimentacao: 'Alimenta-se quase só de krill (pequenos crustáceos): pode engolir até 40 milhões de krill (cerca de 3.600 kg) num único dia, sem ter um único dente — filtra a água com placas de barbatana.',
+      comportamento: 'Costuma viver sozinha ou em pares, sem formar grandes grupos como outras baleias, embora várias possam se concentrar em áreas ricas em alimento.',
+      conservacao: 'Classificada como "Em Perigo" pela IUCN. A caça comercial do início do século XX reduziu drasticamente a população; hoje as ameaças incluem colisão com navios, redes de pesca e mudanças climáticas que afetam o krill. Recebeu proteção total contra caça comercial em 1966.',
+      curiosidades: [
+        'É o maior animal que já existiu no planeta — maior até que os maiores dinossauros conhecidos.',
+        'Sua língua sozinha pode pesar cerca de 2,7 toneladas — mais que um elefante africano adulto médio.',
+        'Os pulmões podem conter até 5.000 litros de ar.',
+        'Seus sons podem chegar a 188 decibéis — mais alto que um avião decolando — e são ouvidos por outras baleias a mais de 800 km de distância.',
+        'Um filhote recém-nascido já pesa cerca de 2.700 kg.'
+      ],
+      fontes: 'NOAA Fisheries, Wikipédia'
+    }
+  },
+  {
+    id: 'urso_pardo', name: 'Urso-pardo', species: 'Ursus arctos', emoji: '🐻',
+    attrs: { peso_kg: 217, velocidade_kmh: 50, expectativa_anos: 25, altura_cm: 150, populacao_estimada: 200000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/5/5d/Kamchatka_Brown_Bear_near_Dvuhyurtochnoe_on_2015-07-23.jpg',
+      author: 'Robert F. Tobler', license: 'CC BY-SA 4.0'
+    },
+    sound: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/4/4e/Bear_growl.ogg',
+      description: 'rosnado (gravação genérica de urso)', author: 'Shizhao', license: 'CC BY 3.0'
+    },
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Urso-pardo',
+    info: {
+      habitat: 'Tem a distribuição mais ampla entre todos os ursos vivos: Rússia, Ásia Central, China, Canadá, EUA (Alasca), Escandinávia, Cárpatos, Anatólia e Cáucaso.',
+      alimentacao: 'Onívoro oportunista — come aves, répteis, peixes (é famoso pescando salmão), carniça, roedores, mel, frutas e grandes mamíferos como cervos e alces.',
+      comportamento: 'Solitário, mas tolera outros ursos quando há fartura de comida. Hiberna até 7 meses no inverno, sem comer, beber, urinar ou defecar nesse período.',
+      conservacao: 'Classificado como "Pouco Preocupante" pela IUCN globalmente, mas várias subpopulações estão criticamente ameaçadas ou já foram extintas, como na Califórnia, norte da África e México.',
+      curiosidades: [
+        'O urso-de-Kodiak, subespécie do Alasca, é o maior urso-pardo já registrado, com até 751 kg.',
+        'Durante a hibernação, reduz drasticamente a respiração e os batimentos cardíacos sem perder massa muscular.',
+        'Em Portugal, o último urso-pardo foi abatido em 1843.',
+        'Pode viver até 47 anos em cativeiro, quase o dobro da expectativa na natureza.',
+        'É considerado animal nacional em vários países europeus.'
+      ],
+      fontes: 'Wikipédia, National Geographic'
+    }
+  },
+  {
+    id: 'panda', name: 'Panda-gigante', species: 'Ailuropoda melanoleuca', emoji: '🐼',
+    attrs: { peso_kg: 110, velocidade_kmh: 40, expectativa_anos: 20, altura_cm: 75, populacao_estimada: 1864 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/d/dd/A_Happy_Panda.jpg',
+      author: 'Ashley98lee', license: 'CC BY 4.0'
+    },
+    sound: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/b/b8/Giant_panda_twittering.ogg',
+      description: 'vocalização de "gorjeio" (twittering)', author: 'gravação de campo', license: 'Domínio público'
+    },
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Panda-gigante',
+    info: {
+      habitat: 'Vive em florestas montanhosas temperadas com densos bambuzais, entre 1.200 e 4.100 m de altitude, restrito a seis regiões isoladas no centro-sul da China.',
+      alimentacao: 'Apesar de pertencer à ordem dos carnívoros, é essencialmente herbívoro — come de 9 a 14 kg de bambu por dia, de até 25 espécies diferentes.',
+      comportamento: 'Solitário e territorial; fêmeas não toleram outras fêmeas em seu território. Marca território arranhando árvores e urinando.',
+      conservacao: 'Reclassificado de "Em Perigo" para "Vulnerável" pela IUCN em 2016, graças a décadas de conservação liderada pelo governo chinês. A principal ameaça hoje é a fragmentação de habitat.',
+      curiosidades: [
+        'Perdeu geneticamente o receptor de sabor umami, o que pode ter contribuído para a mudança evolutiva para a dieta de bambu.',
+        'Sua classificação taxonômica (urso, guaxinim ou família própria) foi debatida por mais de 150 anos.',
+        'A panda mais velha já registrada em cativeiro viveu 37 anos.',
+        'Apenas cerca de 10% dos pandas em cativeiro se reproduzem naturalmente.',
+        'Registros chineses de 3.000 anos atrás já mencionavam o animal sob nomes antigos.'
+      ],
+      fontes: 'Wikipédia, Mongabay (avaliação IUCN)'
+    }
+  },
+  {
+    id: 'gorila', name: 'Gorila', species: 'Gorilla gorilla', emoji: '🦍',
+    attrs: { peso_kg: 160, velocidade_kmh: 40, expectativa_anos: 38, altura_cm: 165, populacao_estimada: 316000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/b/b9/Lowland_Gorilla_%283336248861%29.jpg',
+      author: 'Rennett Stowe', license: 'CC BY 2.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Gorilla',
+    info: {
+      habitat: 'Vive nas florestas tropicais do centro da África. Gorilas-de-montanha vivem entre 2.225 e 4.267 m de altitude; espécies ocidentais preferem florestas densas e pântanos de terras baixas.',
+      alimentacao: 'Principalmente herbívoro — frutas, folhas e brotos; insetos representam menos de 2% da dieta.',
+      comportamento: 'Vive em grupos liderados por um macho dominante, o "costas-prateadas". Demonstra comportamentos lúdicos e inteligência notável, incluindo uso de ferramentas.',
+      conservacao: 'A maioria das subespécies é classificada como "Criticamente em Perigo" pela IUCN. As principais ameaças são destruição de habitat, caça furtiva e doenças como o Ebola.',
+      curiosidades: [
+        'Humanos e gorilas compartilham entre 98% e 99% do DNA.',
+        'Cada gorila tem impressões digitais únicas, assim como os humanos.',
+        'Estima-se que um gorila seja de 4 a 9 vezes mais forte que um humano adulto.',
+        'Pesquisadores já observaram fêmeas usando gravetos para medir a profundidade da água.',
+        'Um gorila chamado Ambam ficou famoso por caminhar ereto sobre duas pernas por longos períodos, algo raro na espécie.'
+      ],
+      fontes: 'San Diego Zoo Wildlife Alliance, IUCN Red List, Wikipédia'
+    }
+  },
+  {
+    id: 'chimpanze', name: 'Chimpanzé', species: 'Pan troglodytes', emoji: '🐵',
+    attrs: { peso_kg: 40, velocidade_kmh: 40, expectativa_anos: 33, altura_cm: 150, populacao_estimada: 250000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/e/e6/Chimpanzee_1d_%285512034715%29.jpg',
+      author: 'Tony Hisgett', license: 'CC BY 2.0'
+    },
+    sound: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/5/56/Pant-hoot_call_made_by_a_male_chimpanzee.ogg',
+      description: 'chamado "pant-hoot" (vocalização de longa distância)', author: 'Pawel Fedurek et al.', license: 'CC BY 4.0'
+    },
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Chimpanz%C3%A9',
+    info: {
+      habitat: 'Vive em florestas tropicais úmidas e matas secas de savana na África Central e Ocidental, da Nigéria a Angola, Tanzânia e Quênia.',
+      alimentacao: 'Predominantemente frugívoro (mais de 250 tipos de frutas), complementado por folhas, flores, sementes e, ocasionalmente, carne de pequenos animais.',
+      comportamento: 'Vive em grupos de 5 a 100 indivíduos com hierarquia clara, geralmente liderados por um ou dois machos dominantes que formam coalizões para manter o poder.',
+      conservacao: 'Classificado como "Em Perigo" pela IUCN (a subespécie ocidental é "Criticamente em Perigo"). A principal ameaça é a caça ilegal, perda de habitat e conflitos armados na região de distribuição.',
+      curiosidades: [
+        'Compartilha entre 98% e 99% do DNA com os humanos.',
+        'É capaz de se reconhecer no espelho, um sinal de autoconsciência.',
+        'Diferentes populações têm técnicas culturais próprias, passadas entre gerações, como usar ferramentas para pescar cupins.',
+        'Um macho adulto tem cerca de 1,3 a 1,5 vez a força de um homem adulto de peso semelhante.',
+        'Alguns indivíduos treinados aprenderam língua de sinais para se comunicar com humanos.'
+      ],
+      fontes: 'Wikipédia, National Geographic'
+    }
+  },
+  {
+    id: 'crocodilo', name: 'Crocodilo-do-nilo', species: 'Crocodylus niloticus', emoji: '🐊',
+    attrs: { peso_kg: 500, velocidade_kmh: 14, expectativa_anos: 70, altura_cm: 450, populacao_estimada: 375000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/e/e9/Serengeti_Nile_croc_JF2.jpg',
+      author: 'Jan Fleischmann', license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Crocodilo-do-nilo',
+    info: {
+      habitat: 'Vive em rios, lagos e pântanos de água doce em 26 países da África Subsaariana; também tolera água salobra.',
+      alimentacao: 'Predador oportunista — filhotes comem peixes, sapos e insetos; adultos caçam peixes grandes, aves, répteis e mamíferos, inclusive na beira d’água.',
+      comportamento: 'Majoritariamente solitário, mas compartilha pontos de sol e grandes carcaças com outros indivíduos seguindo uma hierarquia de tamanho. Fêmeas cuidam dos filhotes por até 2 anos.',
+      conservacao: 'Classificado como "Pouco Preocupante" pela IUCN, mas listado em acordos internacionais de proteção em parte de sua distribuição — foi caçado quase até a extinção local em várias regiões antes das proteções entrarem em vigor.',
+      curiosidades: [
+        'Pode prender a respiração e ficar submerso por longos períodos enquanto emboscca presas.',
+        'O sexo dos filhotes é determinado pela temperatura do ninho durante a incubação, que dura cerca de 90 dias.',
+        'Fêmeas põem entre 25 e 95 ovos por ninhada.',
+        'Só atinge maturidade sexual entre 12 e 16 anos de idade.',
+        'É um dos poucos répteis que cuida ativamente dos filhotes após o nascimento.'
+      ],
+      fontes: 'Wikipédia, San Diego Zoo Wildlife Alliance'
+    }
+  },
+  {
+    id: 'komodo', name: 'Dragão-de-komodo', species: 'Varanus komodoensis', emoji: '🦎',
+    attrs: { peso_kg: 70, velocidade_kmh: 20, expectativa_anos: 30, altura_cm: 259, populacao_estimada: 3014 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/4/44/Komodo_dragon_%28Varanus_komodoensis%29_4.jpg',
+      author: 'Charles J. Sharp', license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Drag%C3%A3o-de-komodo',
+    info: {
+      habitat: 'Endêmico de 5 ilhas indonésias — Komodo, Rinca, Flores, Gili Dasami e Gili Motang — em savanas e florestas tropicais secas de baixa altitude.',
+      alimentacao: 'Carnívoro carniceiro e caçador ativo; presas principais são veados e porcos selvagens, mas também búfalos-d’água. Consegue comer até 80% do próprio peso numa única refeição.',
+      comportamento: 'Solitário, exceto na época de acasalamento e em grandes carcaças, onde disputa espaço com outros dragões seguindo uma hierarquia. Pode até praticar canibalismo.',
+      conservacao: 'Reclassificado de "Vulnerável" para "Em Perigo" pela IUCN em 2021 — a principal ameaça é a perda de habitat pela elevação do nível do mar ligada às mudanças climáticas.',
+      curiosidades: [
+        'Possui glândulas de veneno que impedem a coagulação do sangue da presa.',
+        'Filhotes vivem nas árvores nos primeiros anos de vida para escapar de predadores adultos, inclusive da própria espécie.',
+        'Fêmeas podem se reproduzir por partenogênese (sem macho), gerando apenas filhotes machos.',
+        'Sobrevive com pouquíssimas refeições por ano graças ao metabolismo lento.',
+        'Geralmente evita pessoas, apesar de ataques raros já terem sido documentados.'
+      ],
+      fontes: 'Wikipédia'
+    }
+  },
+  {
+    id: 'tubarao_branco', name: 'Tubarão-branco', species: 'Carcharodon carcharias', emoji: '🦈',
+    attrs: { peso_kg: 1000, velocidade_kmh: 24, expectativa_anos: 70, altura_cm: 490, populacao_estimada: 5800 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Great_White_Shark_%28Carcharodon_carcharias%29_%2832749142772%29.jpg',
+      author: 'Bernard DUPONT', license: 'CC BY-SA 2.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Tubar%C3%A3o-branco',
+    info: {
+      habitat: 'Vive em águas costeiras e oceânicas tropicais a temperadas ao redor do mundo — América do Norte, África do Sul, Japão, Oceania, Chile, Mediterrâneo — podendo mergulhar a até 1.300 m de profundidade.',
+      alimentacao: 'Predador de topo — peixes, focas, leões-marinhos, golfinhos, tartarugas marinhas e aves. Indivíduos acima de 3 m preferem mamíferos marinhos, enquanto jovens comem peixes e lulas.',
+      comportamento: 'Apesar da fama solitária, se comunica por linguagem corporal complexa e forma hierarquias de dominância por tamanho, sexo e residência; já foi observado caçando em pequenos grupos estáveis.',
+      conservacao: 'Classificado como "Vulnerável" pela IUCN globalmente (e "Criticamente em Perigo" na Europa). A principal ameaça é a pesca, direta e acidental, incluindo captura para nadadeiras.',
+      curiosidades: [
+        'Pode viver mais de 70 anos, um dos peixes cartilaginosos mais longevos já registrados.',
+        'Fêmeas só atingem maturidade sexual aos 33 anos; machos aos 26.',
+        'A gestação dura cerca de 11 meses.',
+        'Um estudo genético de 2025 estimou a população mundial em pelo menos 5.800 indivíduos, podendo passar de 20.000.',
+        'Diferente do mito popular, costuma "investigar" objetos desconhecidos mordendo-os para identificá-los, não por preferência alimentar por humanos.'
+      ],
+      fontes: 'Wikipédia, estudo genético de 2025 (Gavin Naylor et al.)'
     }
   }
 ];
