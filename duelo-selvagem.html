@@ -701,6 +701,77 @@ function myRole(){ return state.role; }
 function oppRole(){ return state.role === 'host' ? 'guest' : 'host'; }
 
 /* ==========================================================================
+   EFEITOS SONOROS DE INTERFACE (sintetizados via Web Audio API — sem
+   arquivos externos, tocam na hora e não dependem de licença/hospedagem).
+   O AudioContext é destravado no primeiro clique real do usuário (criar
+   sala / entrar na sala), exigência dos navegadores para tocar áudio.
+   ========================================================================== */
+let audioCtx = null;
+function unlockAudio(){
+  if(!audioCtx){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(AC) audioCtx = new AC();
+  }
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playTone(freq, startTime, duration, type, gainPeak){
+  if(!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, startTime);
+  gain.gain.setValueAtTime(0.0001, startTime);
+  gain.gain.linearRampToValueAtTime(gainPeak, startTime + 0.015);
+  gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(startTime);
+  osc.stop(startTime + duration + 0.03);
+}
+
+function playFlipSound(){
+  // "vira a carta" — abrir o verso no modal de informações
+  if(!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(650, t);
+  osc.frequency.exponentialRampToValueAtTime(180, t + 0.16);
+  gain.gain.setValueAtTime(0.0001, t);
+  gain.gain.linearRampToValueAtTime(0.16, t + 0.015);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(t);
+  osc.stop(t + 0.2);
+}
+
+function playDealSound(){
+  // nova carta revelada para o jogador (início de jogo ou próxima rodada)
+  if(!audioCtx) return;
+  const t = audioCtx.currentTime;
+  playTone(320, t, 0.09, 'triangle', 0.13);
+  playTone(430, t + 0.07, 0.11, 'triangle', 0.13);
+}
+
+function playResultSound(outcome){
+  // revelação de quem ganhou a rodada
+  if(!audioCtx) return;
+  const t = audioCtx.currentTime;
+  if(outcome === 'win'){
+    playTone(523.25, t, 0.14, 'sine', 0.15);
+    playTone(659.25, t + 0.11, 0.14, 'sine', 0.15);
+    playTone(783.99, t + 0.22, 0.24, 'sine', 0.17);
+  } else if(outcome === 'lose'){
+    playTone(349.23, t, 0.16, 'sawtooth', 0.09);
+    playTone(293.66, t + 0.13, 0.26, 'sawtooth', 0.09);
+  } else {
+    playTone(440, t, 0.13, 'square', 0.1);
+    playTone(440, t + 0.16, 0.17, 'square', 0.1);
+  }
+}
+
+/* ==========================================================================
    DEBUG NA TELA (para diagnosticar em celular sem DevTools)
    ========================================================================== */
 const debugState = { channelStatus: '(nenhum)', joinAttempts: 0, joinsReceived: 0 };
@@ -747,6 +818,7 @@ function randomCode(){
    CRIAR SALA (HOST)
    ========================================================================== */
 document.getElementById('btnCreate').addEventListener('click', () => {
+  unlockAudio();
   const name = document.getElementById('playerName').value.trim();
   state.myName = name || 'Jogador 1';
   state.role = 'host';
@@ -765,6 +837,7 @@ document.getElementById('btnCreate').addEventListener('click', () => {
    ENTRAR NA SALA (GUEST)
    ========================================================================== */
 document.getElementById('btnJoin').addEventListener('click', () => {
+  unlockAudio();
   const name = document.getElementById('playerName').value.trim();
   const code = document.getElementById('joinCode').value.trim().toUpperCase();
   if(code.length !== 4){
@@ -928,6 +1001,7 @@ function startGameScreen(){
   document.getElementById('meLabel').textContent = state.myName;
   document.getElementById('oppLabel').textContent = state.oppName;
   renderGame();
+  playDealSound();
 }
 
 function renderGame(){
@@ -991,6 +1065,7 @@ function playCardSound(card){
 }
 
 function openInfoModal(card){
+  playFlipSound();
   document.getElementById('modalImage').src = card.image.url;
   document.getElementById('modalImage').alt = card.name;
   document.getElementById('modalTitle').textContent = card.emoji + ' ' + card.name;
@@ -1130,6 +1205,7 @@ function resolveRound(){
 }
 
 function showRoundResult(myCard, attr, myVal, oppVal, outcome, oppCard){
+  playResultSound(outcome);
   const panel = document.getElementById('resultPanel');
   panel.classList.remove('hidden');
   const meta = ATTR_LABELS[attr];
@@ -1166,6 +1242,7 @@ function checkGameOver(){
     endGame(true);
   } else {
     renderGame();
+    playDealSound();
   }
 }
 
