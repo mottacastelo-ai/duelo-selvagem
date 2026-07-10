@@ -524,7 +524,7 @@
     </div>
   </div>
 
-  <div class="footer-note">feito por Léo &middot; baralho de teste (14 cartas)</div>
+  <div class="footer-note">feito por Léo &middot; baralho (32 cartas)</div>
 </div>
 
 <script>
@@ -903,6 +903,453 @@ const DECK = [
         'Diferente do mito popular, costuma "investigar" objetos desconhecidos mordendo-os para identificá-los, não por preferência alimentar por humanos.'
       ],
       fontes: 'Wikipédia, estudo genético de 2025 (Gavin Naylor et al.)'
+    }
+  },
+  {
+    id: 'tigre', name: 'Tigre', species: 'Panthera tigris', emoji: '🐅',
+    attrs: { peso_kg: 220, velocidade_kmh: 60, expectativa_anos: 13, altura_cm: 100, populacao_estimada: 5574 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/b/b0/Bengal_tiger_%28Panthera_tigris_tigris%29_female_3_crop.jpg',
+      author: 'Charles J. Sharp', license: 'CC BY-SA 4.0'
+    },
+    sound: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/2/29/439280_schots_angry-tiger.wav',
+      description: 'rosnado', author: 'schots', license: 'CC0 (domínio público)'
+    },
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Tigre',
+    info: {
+      habitat: 'Vive em florestas, pântanos e savanas da Ásia, sempre perto de água e presas — do sul da Rússia à Indonésia e Índia.',
+      alimentacao: 'Caça sozinho grandes ungulados, como veados-sambar e javalis, geralmente animais de 90 kg ou mais.',
+      comportamento: 'Solitário e muito territorial; marca e defende grandes áreas de floresta contra outros tigres.',
+      conservacao: 'Classificado como "Em Perigo" pela IUCN. A população mundial caiu cerca de 97% desde o início do século XX, principalmente por caça ilegal e perda de habitat.',
+      curiosidades: [
+        'É um nadador forte, capaz de cruzar rios de até 7 km de largura.',
+        'Um gene recessivo raro pode gerar o "tigre dourado", com listras mais claras.',
+        'O rugido do tigre pode ser ouvido a até 3 km de distância.',
+        'É o maior felino vivo do mundo.',
+        'Cada tigre tem um padrão de listras único, como impressão digital.'
+      ],
+      fontes: 'Wikipédia, WWF, Global Tiger Forum, Panthera.org (nota: expectativa de vida na natureza vem de fontes secundárias convergentes, não há valor oficial único)'
+    }
+  },
+  {
+    id: 'onca', name: 'Onça-pintada', species: 'Panthera onca', emoji: '🐆',
+    attrs: { peso_kg: 110, velocidade_kmh: 80, expectativa_anos: 13, altura_cm: 70, populacao_estimada: 64000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/0/0a/Standing_jaguar.jpg',
+      author: 'U.S. Fish and Wildlife Service', license: 'Domínio público'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/On%C3%A7a-pintada',
+    info: {
+      habitat: 'Vive em florestas tropicais e áreas alagadas como o Pantanal, sempre perto de rios e lagos.',
+      alimentacao: 'Carnívora com dieta muito variada (mais de 80 espécies já registradas), prefere presas grandes como jacarés, capivaras e antas.',
+      comportamento: 'Solitária; o território de um macho costuma cobrir o de 2 a 3 fêmeas.',
+      conservacao: 'Classificada como "Quase Ameaçada" pela IUCN globalmente (algumas subpopulações fora da Amazônia estão em situação bem mais crítica). A principal ameaça é a perda de habitat e o conflito com a pecuária.',
+      curiosidades: [
+        'Tem a mordida mais poderosa entre os grandes felinos, capaz de perfurar o crânio da presa.',
+        'É o terceiro maior felino do mundo, atrás do tigre e do leão.',
+        'É uma excelente nadadora, diferente da maioria dos grandes felinos.',
+        'O nome vem do tupi "îagûara", que significa "o que mata com um salto".',
+        'Pode viver até 30 anos em cativeiro.'
+      ],
+      fontes: 'Wikipédia, IUCN Cat Specialist Group (nota: velocidade máxima vem de fonte secundária, sem confirmação enciclopédica direta)'
+    }
+  },
+  {
+    id: 'leopardo', name: 'Leopardo', species: 'Panthera pardus', emoji: '🐆',
+    attrs: { peso_kg: 60, velocidade_kmh: 58, expectativa_anos: 12, altura_cm: 65, populacao_estimada: 75000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/7/70/African_leopard_male_%28cropped%29.jpg',
+      author: 'Sumeet Moghe', license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Leopardo',
+    info: {
+      habitat: 'É o grande felino mais adaptável do planeta: vive em savanas, florestas tropicais e montanhosas da África e da Ásia.',
+      alimentacao: 'Caça principalmente impalas e outros ungulados médios, e costuma arrastar a presa para cima de árvores, longe de outros predadores.',
+      comportamento: 'Solitário; consegue carregar presas até 6 vezes o seu próprio peso morro acima.',
+      conservacao: 'Classificado como "Vulnerável" pela IUCN, com declínio de mais de 30% em três gerações. A principal ameaça é a perda de habitat e a caça furtiva.',
+      curiosidades: [
+        'Pode nascer com pelagem toda escura — é o que popularmente se chama de "pantera-negra".',
+        'Usa a cauda longa para se equilibrar enquanto sobe em árvores.',
+        'Faz parte do tradicional "Big Five" da caça e do safári africano.',
+        'Cada ninhada tem de 2 a 4 filhotes.',
+        'É o felino selvagem com a distribuição geográfica mais ampla do mundo.'
+      ],
+      fontes: 'Wikipédia, IUCN Red List (nota: não existe estimativa global oficial de população; usamos o ponto médio de estimativas não-oficiais entre 50.000 e 100.000+)'
+    }
+  },
+  {
+    id: 'urso_polar', name: 'Urso-polar', species: 'Ursus maritimus', emoji: '🐻‍❄️',
+    attrs: { peso_kg: 600, velocidade_kmh: 40, expectativa_anos: 30, altura_cm: 150, populacao_estimada: 26000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/6/66/Polar_Bear_-_Alaska_%28cropped%29.jpg',
+      author: 'Alan Wilson', license: 'CC BY-SA 3.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Urso-polar',
+    info: {
+      habitat: 'Vive sobre o banco de gelo do Ártico, onde o gelo encontra a água do mar.',
+      alimentacao: 'Alimenta-se principalmente de focas-aneladas e focas-barbudas; ocasionalmente come aves, ovos, peixes e vegetação.',
+      comportamento: 'Solitário na maior parte do ano, exceto na época de reprodução.',
+      conservacao: 'Classificado como "Vulnerável" pela IUCN desde 2006. A principal ameaça é o derretimento do gelo marinho causado pelas mudanças climáticas.',
+      curiosidades: [
+        'É, junto com o urso-Kodiak, o maior carnívoro terrestre do mundo.',
+        'É um nadador excelente — já foi avistado a até 320 km da costa mais próxima.',
+        'O maior espécime já registrado pesava 1.002 kg.',
+        'O primeiro registro histórico do animal tem mais de 2.300 anos, do Egito Antigo.',
+        'A pele do urso-polar é preta — o pelo é transparente e só parece branco por refletir a luz.'
+      ],
+      fontes: 'Wikipédia, IUCN/SSC Polar Bear Specialist Group (relatório de 2024)'
+    }
+  },
+  {
+    id: 'rinoceronte', name: 'Rinoceronte-branco', species: 'Ceratotherium simum', emoji: '🦏',
+    attrs: { peso_kg: 2300, velocidade_kmh: 64, expectativa_anos: 45, altura_cm: 178, populacao_estimada: 17464 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/2/21/African_White_rhinoceros_Ceratotherium_simum_simum6.JPG',
+      author: 'Laslovarga', license: 'CC BY-SA 3.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Rinoceronte-branco',
+    info: {
+      habitat: 'Vive em savanas e pastagens de capim curto no sul da África — África do Sul, Namíbia, Botsuana e Zimbábue.',
+      alimentacao: 'Herbívoro pastador: sua boca larga e quadrada foi feita para "cortar" gramíneas bem rentes ao chão.',
+      comportamento: 'É o rinoceronte mais social entre todas as espécies — fêmeas e filhotes formam grupos de até 14 indivíduos; machos adultos são solitários e territoriais.',
+      conservacao: 'Classificado como "Quase Ameaçado" pela IUCN (a subespécie do norte está à beira da extinção, restam só 2 fêmeas em cativeiro). A maior ameaça é a caça ilegal pelo chifre.',
+      curiosidades: [
+        'É o segundo maior mamífero terrestre do mundo, atrás só do elefante.',
+        'Tem as narinas mais largas entre todos os mamíferos terrestres.',
+        'O nome "branco" vem de uma tradução errada da palavra africâner "wyd" (largo) — não tem relação com a cor.',
+        'Gosta de se lambuzar de lama para se proteger do sol e de insetos.',
+        'Marca território com montes de esterco que podem passar de 30 por área.'
+      ],
+      fontes: 'Wikipédia, WWF, Save the Rhino International, IUCN Red List'
+    }
+  },
+  {
+    id: 'hipopotamo', name: 'Hipopótamo', species: 'Hippopotamus amphibius', emoji: '🦛',
+    attrs: { peso_kg: 1480, velocidade_kmh: 30, expectativa_anos: 45, altura_cm: 150, populacao_estimada: 122500 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/e/e5/Hippo_%28Hippopotamus_amphibius%29_%2816485955207%29.jpg',
+      author: 'Bernard DUPONT', license: 'CC BY-SA 2.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Hipop%C3%B3tamo-comum',
+    info: {
+      habitat: 'Vive em rios, lagos e pântanos de água doce na África Subsaariana, passando o dia na água e saindo à noite para pastar.',
+      alimentacao: 'Herbívoro — come quase só capim, consumindo até 68 kg de grama por noite.',
+      comportamento: 'Touros territoriais controlam trechos de rio com várias fêmeas e filhotes; em terra, costumam pastar sozinhos.',
+      conservacao: 'Classificado como "Vulnerável" pela IUCN, ameaçado por perda de habitat e caça pela carne e pelos dentes.',
+      curiosidades: [
+        'Seus parentes vivos mais próximos são as baleias e os golfinhos — não os porcos.',
+        'Secreta um fluido avermelhado que funciona como protetor solar natural.',
+        'Consegue prender a respiração e sobe à superfície automaticamente a cada 3-5 minutos, até dormindo.',
+        'É considerado um dos mamíferos mais perigosos da África para humanos.',
+        'A mordida tem força estimada em cerca de 810 kgf.'
+      ],
+      fontes: 'Wikipédia, IUCN Red List (nota: velocidade máxima em terra não é oficialmente confirmada por nenhuma fonte primária)'
+    }
+  },
+  {
+    id: 'bufalo', name: 'Búfalo-africano', species: 'Syncerus caffer', emoji: '🐃',
+    attrs: { peso_kg: 870, velocidade_kmh: 56, expectativa_anos: 11, altura_cm: 160, populacao_estimada: 400000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/d/de/African_buffalo_%28Syncerus_caffer%29_male_with_Oxpecker.jpg',
+      author: 'Charles J. Sharp', license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/B%C3%BAfalo-africano',
+    info: {
+      habitat: 'Vive em savanas, pântanos, planícies alagadas e florestas da África Subsaariana.',
+      alimentacao: 'Herbívoro pastador de gramíneas altas e duras.',
+      comportamento: 'Vive em grandes manadas com estrutura social complexa — as fêmeas participam de uma espécie de "votação" coletiva para decidir a direção do grupo, e a manada já foi filmada cercando e enxotando leões pra proteger os filhotes.',
+      conservacao: 'Classificado como "Quase Ameaçado" pela IUCN (avaliação de 2019), com populações em declínio por perda de habitat e doenças compartilhadas com o gado.',
+      curiosidades: [
+        'Nunca foi domesticado, por ser imprevisível e agressivo.',
+        'Não consegue cruzar com o gado doméstico — tem número diferente de cromossomos.',
+        'Faz parte do "Big Five" da caça e do safári africano.',
+        'Os chifres se fundem na testa dos machos adultos, formando um "capacete" ósseo chamado "boss".',
+        'É considerado um dos animais mais perigosos da África para caçadores e turistas.'
+      ],
+      fontes: 'Wikipédia, IUCN Red List (nota: velocidade máxima vem de fonte especializada em safári, não de Wikipédia/IUCN/WWF diretamente)'
+    }
+  },
+  {
+    id: 'zebra', name: 'Zebra-da-planície', species: 'Equus quagga', emoji: '🦓',
+    attrs: { peso_kg: 270, velocidade_kmh: 64, expectativa_anos: 25, altura_cm: 135, populacao_estimada: 500000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/e/e3/Plains_Zebra_Equus_quagga.jpg',
+      author: 'Muhammad Mahdi Karim', license: 'GFDL 1.2'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Zebra-da-plan%C3%ADcie',
+    info: {
+      habitat: 'Vive em savanas e campos abertos da África oriental e austral; nunca fica a mais de 10-12 km de água.',
+      alimentacao: 'Herbívora pastadora, prefere gramíneas como o capim-vermelho.',
+      comportamento: 'Vive em "haréns" — um macho, várias fêmeas e filhotes — além de grupos só de machos solteiros. Vários haréns se juntam em manadas enormes durante as migrações.',
+      conservacao: 'Classificada como "Quase Ameaçada" pela IUCN — população geral estável, mas com declínios acentuados em vários países.',
+      curiosidades: [
+        'Cada zebra tem um padrão de listras completamente único, como uma impressão digital.',
+        'O nome científico "quagga" vem de uma palavra khoikhoi que imita o som do relincho da zebra.',
+        'Existe uma população solta de zebras vivendo há décadas em San Simeon, na Califórnia, descendentes de um zoológico particular antigo.',
+        'As listras ajudam a confundir predadores e podem ajudar a repelir moscas.',
+        'Faz catação mútua (grooming) com outras zebras para reforçar laços sociais.'
+      ],
+      fontes: 'Wikipédia, IUCN Red List'
+    }
+  },
+  {
+    id: 'lobo', name: 'Lobo-cinzento', species: 'Canis lupus', emoji: '🐺',
+    attrs: { peso_kg: 40, velocidade_kmh: 60, expectativa_anos: 8, altura_cm: 80, populacao_estimada: 225000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/f/f6/Canis_lupus_occidentalis.jpg',
+      author: 'Ellie Attebery', license: 'CC BY 2.0'
+    },
+    sound: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Wolf_howls.ogg',
+      description: 'uivo', author: 'U.S. Fish and Wildlife Service', license: 'Domínio público'
+    },
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Lobo-cinzento',
+    info: {
+      habitat: 'Vive em florestas, tundras, pântanos, desertos e montanhas — tem uma das distribuições geográficas mais amplas entre os mamíferos terrestres.',
+      alimentacao: 'Carnívoro/onívoro: caça ungulados grandes e médios, além de roedores e aves.',
+      comportamento: 'Vive em matilhas lideradas por um casal alfa.',
+      conservacao: 'Classificado como "Pouco Preocupante" pela IUCN globalmente, embora esteja extinto ou raro em muitas regiões onde já foi comum.',
+      curiosidades: [
+        'A mordida do lobo pode chegar a 10.000 kPa de pressão.',
+        'A audição é tão aguçada que consegue ouvir uma folha caindo no outono.',
+        'O uivo pode ser ouvido a até 1 km de distância.',
+        'O maior espécime já registrado pesou 79 kg, no Alasca em 1939.',
+        'Tem a visão noturna mais aguçada entre os canídeos.'
+      ],
+      fontes: 'Wikipédia, National Wildlife Federation, Britannica'
+    }
+  },
+  {
+    id: 'hiena', name: 'Hiena-malhada', species: 'Crocuta crocuta', emoji: '🐕',
+    attrs: { peso_kg: 70, velocidade_kmh: 60, expectativa_anos: 12, altura_cm: 80, populacao_estimada: 39000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/d/dc/Spotted_hyena_%28Crocuta_crocuta%29.jpg',
+      author: 'Charles J. Sharp', license: 'CC BY-SA 4.0'
+    },
+    sound: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/9/9f/Spotted_Hyena_Grunting_%28Crocuta_crocuta%29.ogg',
+      description: 'grunhido', author: 'Tom Snyder', license: 'CC BY-SA 3.0'
+    },
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Hiena-malhada',
+    info: {
+      habitat: 'Vive na savana africana subsaariana.',
+      alimentacao: 'Predadora ativa — entre 50% e 98% da dieta vem de caça própria, não de restos de outros animais, ao contrário do que se costuma pensar.',
+      comportamento: 'Vive em clãs matriarcais de até 80 indivíduos, liderados por fêmeas — que, nessa espécie, são maiores e mais fortes que os machos.',
+      conservacao: 'Classificada como "Pouco Preocupante" pela IUCN.',
+      curiosidades: [
+        'As fêmeas podem ser até 12% maiores que os machos — o oposto da maioria dos carnívoros.',
+        'A mordida no "dente carniceiro" chega a quase 1.000 newtons de força.',
+        'Os filhotes já nascem com os olhos abertos e os dentes afiados.',
+        'Pode ser domesticada se criada desde filhote, embora isso seja raro.',
+        'A risada característica é, na verdade, um sinal de estresse ou submissão, não de "graça".'
+      ],
+      fontes: 'Wikipédia, San Diego Zoo Wildlife Alliance (nota: expectativa de vida na natureza usa dado de cativeiro como aproximação, por falta de estudo específico)'
+    }
+  },
+  {
+    id: 'canguru', name: 'Canguru-vermelho', species: 'Osphranter rufus', emoji: '🦘',
+    attrs: { peso_kg: 75, velocidade_kmh: 60, expectativa_anos: 22, altura_cm: 140, populacao_estimada: 5800000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/6/6c/Female_Red_Kangaroo_%28Macropus_rufus%29.jpg',
+      author: 'Bidgee', license: 'CC BY 3.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Canguru-vermelho',
+    info: {
+      habitat: 'Vive em savanas áridas e áreas semidesérticas do interior da Austrália, evitando o litoral fértil e a floresta tropical.',
+      alimentacao: 'Herbívoro, come principalmente gramíneas ricas em água.',
+      comportamento: 'Pacífico fora da época de acasalamento; tem hábitos noturnos e crepusculares para evitar o calor do dia.',
+      conservacao: 'Classificado como "Pouco Preocupante" pela IUCN — é o maior marsupial vivo e uma das espécies mais numerosas da Austrália.',
+      curiosidades: [
+        'É o maior marsupial vivo do mundo.',
+        'Aguenta semanas sem beber água, obtendo umidade das plantas que come.',
+        'Lambe as próprias patas dianteiras para se refrescar no calor.',
+        'Fêmeas são menores e acinzentadas; machos adultos costumam ser ruivos.',
+        'Consegue saltar a até 60 km/h e pular mais de 9 metros de distância de uma vez.'
+      ],
+      fontes: 'Wikipédia, Sydney Zoo (nota: população é uma estimativa de 2017 amplamente citada, sem confirmação direta em fonte primária única)'
+    }
+  },
+  {
+    id: 'coala', name: 'Coala', species: 'Phascolarctos cinereus', emoji: '🐨',
+    attrs: { peso_kg: 11, velocidade_kmh: 10, expectativa_anos: 15, altura_cm: 78, populacao_estimada: 300000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/0/06/Koala.jpg',
+      author: 'Summi', license: 'CC BY-SA 3.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Coala',
+    info: {
+      habitat: 'Vive em florestas de eucalipto no leste e sul da Austrália.',
+      alimentacao: 'Alimenta-se quase exclusivamente de folhas de eucalipto, até 400 g por dia, e tira a maior parte da água de que precisa das próprias folhas.',
+      comportamento: 'Solitário; dorme até 20 horas por dia para economizar energia, já que a dieta de eucalipto tem pouco valor nutritivo.',
+      conservacao: 'Classificado como "Vulnerável" pela IUCN, ameaçado por perda de habitat, doenças, atropelamentos e queimadas.',
+      curiosidades: [
+        'O nome vem de uma palavra aborígene que significa "sem água".',
+        'Um filhote recém-nascido pesa menos de 1 grama.',
+        'O intestino (ceco) do coala chega a 2,5 metros de comprimento, adaptado para digerir eucalipto.',
+        'Um estudo científico de 2019 mediu a velocidade máxima real de corrida do coala em cerca de 10 km/h.',
+        'O principal predador natural do coala é o dingo.'
+      ],
+      fontes: 'Wikipédia, estudo científico (Journal of Experimental Biology, 2019) sobre locomoção do coala'
+    }
+  },
+  {
+    id: 'morsa', name: 'Morsa', species: 'Odobenus rosmarus', emoji: '🦭',
+    attrs: { peso_kg: 1700, velocidade_kmh: 35, expectativa_anos: 25, altura_cm: 320, populacao_estimada: 112500 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/9/90/Walrus_%28Odobenus_rosmarus%29_on_Svalbard.jpg',
+      author: 'AWeith', license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Morsa',
+    info: {
+      habitat: 'Vive em águas geladas do Ártico e do Pacífico Norte, sempre perto de gelo flutuante e áreas costeiras.',
+      alimentacao: 'Dieta oportunista de fundo do mar — moluscos, caranguejos, vermes marinhos e mexilhões, ocasionalmente peixes.',
+      comportamento: 'Vive em grandes grupos ("manadas") de dezenas a centenas de indivíduos, comunicando-se com sons subaquáticos e batendo as presas no gelo.',
+      conservacao: 'Classificada como "Vulnerável" pela IUCN. As principais ameaças são o degelo do Ártico e a perturbação humana.',
+      curiosidades: [
+        'As presas (dentes caninos) podem passar de 1 metro de comprimento.',
+        'Usa as presas para se içar sobre o gelo — o nome científico significa algo como "aquele que caminha com os dentes".',
+        'Os bigodes (vibrissas) são tão sensíveis que detectam moluscos no fundo do mar, no escuro total.',
+        'Consegue reduzir os batimentos cardíacos para resistir ao frio extremo da água.',
+        'Filhotes já sabem nadar horas depois de nascer.'
+      ],
+      fontes: 'Wikipédia, Polar Guidebook'
+    }
+  },
+  {
+    id: 'aguia', name: 'Águia-de-cabeça-branca', species: 'Haliaeetus leucocephalus', emoji: '🦅',
+    attrs: { peso_kg: 5.6, velocidade_kmh: 160, expectativa_anos: 28, altura_cm: 230, populacao_estimada: 150000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/1/1e/Bald_Eagle_Portrait.jpg',
+      author: 'Saffron Blaze', license: 'CC BY-SA 3.0'
+    },
+    sound: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/5/59/Bald_Eagle_Yellowstone_National_Park.ogg',
+      description: 'canto', author: 'National Park Service (EUA)', license: 'Domínio público'
+    },
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/%C3%81guia-de-cabe%C3%A7a-branca',
+    info: {
+      habitat: 'Vive perto de mares, rios e lagos, do Alasca ao Golfo do México — precisa de árvores altas para nidificar.',
+      alimentacao: 'Come principalmente peixes capturados com as garras; também pequenos mamíferos, répteis e outras aves.',
+      comportamento: 'Geralmente solitária ou em casal — forma pares para a vida toda e constrói o maior ninho entre as aves norte-americanas, com até 1,1 m de largura.',
+      conservacao: 'Classificada como "Pouco Preocupante" pela IUCN — se recuperou de quase a extinção, causada por pesticidas (DDT), no século XX.',
+      curiosidades: [
+        'É o símbolo nacional dos Estados Unidos desde 1782.',
+        'Apesar do apelido, não é careca — tem penas brancas cobrindo a cabeça toda.',
+        'Em 1963 restavam apenas 417 casais reprodutores nos EUA.',
+        'Consegue enxergar um peixe na água a mais de 1 km de distância.',
+        'Atinge até 160 km/h em mergulhos de caça.'
+      ],
+      fontes: 'Wikipédia, National Park Service'
+    }
+  },
+  {
+    id: 'falcao', name: 'Falcão-peregrino', species: 'Falco peregrinus', emoji: '🦅',
+    attrs: { peso_kg: 1.5, velocidade_kmh: 389, expectativa_anos: 19, altura_cm: 100, populacao_estimada: 300000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/9/94/Peregrine_Falcon_%28male%29_cropped.jpg',
+      author: 'Sumeet Moghe', license: 'CC BY-SA 4.0'
+    },
+    sound: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Halc%C3%B3n_peregrino.ogg',
+      description: 'canto', author: 'Sternanita3', license: 'CC BY-SA 4.0'
+    },
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Falc%C3%A3o-peregrino',
+    info: {
+      habitat: 'Presente em todos os continentes, exceto a Antártida — vive em penhascos costeiros, montanhas e também em arranha-céus de grandes cidades.',
+      alimentacao: 'Caça principalmente pombos e outras aves em pleno voo, atacando em mergulho.',
+      comportamento: 'Geralmente solitário, forma pares monogâmicos na época de reprodução. Não constrói ninho — usa reentrâncias de rochas ou prédios.',
+      conservacao: 'Classificado como "Pouco Preocupante" pela IUCN. A população se recuperou depois de quase desaparecer por causa do pesticida DDT.',
+      curiosidades: [
+        'É o animal mais rápido do planeta em seu mergulho de caça.',
+        'Enxerga cerca de 8 vezes melhor que um ser humano.',
+        'Era usado na mitologia egípcia para representar os deuses Hórus e Rá.',
+        'Consegue viver dentro de grandes cidades, caçando pombos entre os prédios.',
+        'O mergulho de caça mais rápido já registrado foi de 389 km/h.'
+      ],
+      fontes: 'Wikipédia, BirdLife International'
+    }
+  },
+  {
+    id: 'avestruz', name: 'Avestruz', species: 'Struthio camelus', emoji: '🦤',
+    attrs: { peso_kg: 130, velocidade_kmh: 70, expectativa_anos: 35, altura_cm: 275, populacao_estimada: 150000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/b/bc/North_African_ostrich_%28Struthio_camelus_camelus%29_male.jpg',
+      author: 'Charles J. Sharp', license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Avestruz-comum',
+    info: {
+      habitat: 'Vive em savanas, desertos e planícies abertas e semiáridas da África.',
+      alimentacao: 'Come principalmente plantas, sementes e frutas; engole pequenas pedras para ajudar a digestão, já que não tem dentes.',
+      comportamento: 'Vive em grupos de 5 a 50 indivíduos, o que ajuda na proteção contra predadores; mais ativo ao amanhecer e ao entardecer.',
+      conservacao: 'Classificada como "Pouco Preocupante" pela IUCN, mas com população em declínio por caça e perda de habitat.',
+      curiosidades: [
+        'É a maior ave viva do mundo, e não voa.',
+        'É o animal terrestre mais rápido do mundo em duas patas.',
+        'Seus olhos medem cerca de 5 cm de diâmetro — os maiores de qualquer animal terrestre.',
+        'Um chute de avestruz pode ser fatal, até para leões.',
+        'O macho emite um som grave territorial ("boom") que pode ser ouvido a quilômetros de distância.'
+      ],
+      fontes: 'Wikipédia (nota: não existe estimativa oficial de população global segundo IUCN/BirdLife; usamos um valor aproximado citado por múltiplas fontes secundárias)'
+    }
+  },
+  {
+    id: 'pinguim', name: 'Pinguim-imperador', species: 'Aptenodytes forsteri', emoji: '🐧',
+    attrs: { peso_kg: 38, velocidade_kmh: 9, expectativa_anos: 20, altura_cm: 115, populacao_estimada: 420000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/7/73/Manchot_empereur_-_Emperor_Penguin_-_Aptenodytes_forsteri.jpg',
+      author: 'Samuel Blanc', license: 'CC BY-SA 3.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Pinguim-imperador',
+    info: {
+      habitat: 'Vive sobre o gelo marinho da Antártida — é a única espécie de pinguim que se reproduz durante o inverno antártico.',
+      alimentacao: 'Come principalmente peixes, crustáceos e lulas, caçados em mergulhos de até 535 m de profundidade.',
+      comportamento: 'Altamente social — forma grandes "abraços" (huddles) para se proteger de ventos de até 200 km/h e temperaturas de -40°C. Os machos incubam o ovo sozinhos por cerca de 65 dias, sem comer.',
+      conservacao: 'Classificado como "Em Perigo" pela IUCN — a população caiu cerca de 10% entre 2009 e 2018, principalmente por causa do derretimento do gelo marinho.',
+      curiosidades: [
+        'Mergulha até 535 m de profundidade e fica até 20 minutos submerso.',
+        'Os machos jejuam por cerca de 120 dias e podem perder até 20 kg nesse período.',
+        'É a maior espécie de pinguim do mundo.',
+        'Só se reproduz na Antártida continental, sobre o gelo.',
+        'Os filhotes ficam protegidos numa "bolsa" de pele entre as patas dos pais.'
+      ],
+      fontes: 'Wikipédia (nota: há divergência entre fontes sobre o número exato de indivíduos — usamos o valor mais citado)'
+    }
+  },
+  {
+    id: 'orangotango', name: 'Orangotango-de-bornéu', species: 'Pongo pygmaeus', emoji: '🦧',
+    attrs: { peso_kg: 75, velocidade_kmh: 5, expectativa_anos: 40, altura_cm: 130, populacao_estimada: 104700 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Male_Bornean_Orangutan_-_Big_Cheeks.jpg',
+      author: 'Eric Kilby', license: 'CC BY-SA 2.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Orangotango-de-born%C3%A9u',
+    info: {
+      habitat: 'Vive em florestas tropicais de terras baixas e montanhas de Bornéu (Indonésia e Malásia), até 1.900 m de altitude.',
+      alimentacao: 'Come mais de 400 tipos de alimento — figos silvestres, durian, folhas, sementes, ovos de aves, flores, seiva, cupins e mel.',
+      comportamento: 'Majoritariamente solitário; é o maior mamífero arborícola do mundo e quase nunca desce ao chão.',
+      conservacao: 'Classificado como "Criticamente Ameaçado" pela IUCN — a população caiu para menos de 14% do nível histórico, principalmente por desmatamento e expansão de plantações de palma.',
+      curiosidades: [
+        'Compartilha cerca de 97% do DNA com os humanos.',
+        'Machos adultos desenvolvem "bochechas" (flanges) características para atrair fêmeas.',
+        'Não sabe nadar.',
+        'Constrói um "ninho" novo de galhos e folhas toda noite, pra dormir.',
+        'Fêmeas só têm filhotes a cada 6 a 8 anos — um dos intervalos reprodutivos mais longos do reino animal.'
+      ],
+      fontes: 'Wikipédia (nota: velocidade terrestre vem de fontes secundárias convergentes, sem confirmação em fonte primária — orangotangos são notoriamente lentos e desajeitados no chão)'
     }
   }
 ];
