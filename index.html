@@ -229,13 +229,33 @@
     padding:4px 8px; border-radius:6px;
     text-transform:uppercase;
   }
-  .card-emoji{ font-size: 56px; line-height:1; margin-bottom:6px; }
+  .card-image-wrap{
+    position:relative; border-radius:12px; overflow:hidden;
+    margin: -2px -2px 14px; aspect-ratio: 4/3; background:#00000015;
+  }
+  .card-image{ width:100%; height:100%; object-fit:cover; display:block; }
+  .card-image-emoji{
+    position:absolute; bottom:8px; left:8px; font-size:22px;
+    background:rgba(0,0,0,0.4); border-radius:8px; padding:2px 7px;
+  }
+  .card-head-row{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    margin-bottom:14px; gap:10px;
+  }
+  .card-actions{ display:flex; gap:8px; flex-shrink:0; }
+  .icon-btn{
+    width:34px; height:34px; border-radius:50%;
+    border:1px solid var(--card-border); background:#fff; color:var(--ink);
+    font-size:15px; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; flex-shrink:0; padding:0;
+  }
+  .icon-btn:active{ transform: scale(0.94); }
   .card-name{
     font-family:'Bricolage Grotesque', sans-serif;
     font-weight:800; font-size:26px; margin:0 0 2px;
   }
   .card-species{
-    font-size:12px; color:#5c6b5f; font-style:italic; margin-bottom:16px;
+    font-size:12px; color:#5c6b5f; font-style:italic;
   }
   .attr-row{
     display:flex; align-items:center; justify-content:space-between;
@@ -280,7 +300,59 @@
     font-family:'Bricolage Grotesque', sans-serif;
     font-weight:800; font-size:20px; margin-bottom:6px;
   }
+  .result-versus{
+    display:flex; align-items:center; justify-content:center; gap:18px;
+    margin: 14px 0 4px;
+  }
+  .result-side{ display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .result-thumb{
+    width:56px; height:56px; object-fit:cover; border-radius:10px;
+    border:2px solid var(--surface-2);
+  }
+  .result-side.winner .result-thumb{ border-color: var(--accent); }
+  .result-side-label{ font-size:11px; color: var(--muted); max-width:100px; }
+  .result-side-value{ font-family:'IBM Plex Mono', monospace; font-weight:700; font-size:15px; }
+  .result-vs-label{ color: var(--accent-dark); font-weight:700; }
+  .result-next-btn{ margin-top:16px; }
   .hidden{ display:none !important; }
+
+  /* --- MODAL: VERSO DA CARTA --- */
+  .modal-overlay{
+    position:fixed; inset:0; background: rgba(0,0,0,0.65);
+    z-index:100; display:flex; align-items:flex-end; justify-content:center;
+  }
+  .modal-sheet{
+    position:relative; background: var(--surface);
+    width:100%; max-width:480px; max-height:86vh; overflow-y:auto;
+    border-radius:22px 22px 0 0; padding:24px 20px 32px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .modal-close{
+    position:absolute; top:14px; right:14px; width:32px; height:32px;
+    border-radius:50%; border:none; background: var(--surface-2);
+    color: var(--paper-ink); font-size:18px; line-height:1; cursor:pointer; z-index:2;
+  }
+  .modal-image{ width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:14px; margin-bottom:14px; }
+  .modal-title{ font-family:'Bricolage Grotesque', sans-serif; font-weight:800; font-size:24px; }
+  .modal-species{ font-size:13px; color: var(--muted); font-style:italic; margin-bottom:14px; }
+  .modal-sound-btn{ margin-bottom:18px; }
+  .modal-section{ margin-bottom:18px; }
+  .modal-section h3{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.08em;
+    text-transform:uppercase; color: var(--accent); margin:0 0 6px;
+  }
+  .modal-section p{ font-size:14px; line-height:1.6; color: var(--paper-ink); margin:0; }
+  .modal-section ul{ margin:0; padding-left:18px; font-size:14px; line-height:1.6; color: var(--paper-ink); }
+  .modal-section li{ margin-bottom:6px; }
+  .modal-wiki-link{
+    display:block; text-align:center; color: var(--accent); font-size:13px; font-weight:600;
+    text-decoration:none; padding:12px; border:1px solid var(--surface-2); border-radius:10px;
+    margin-top:8px;
+  }
+  .modal-credit{
+    text-align:center; font-size:10px; color: var(--muted); margin-top:14px;
+    font-family:'IBM Plex Mono', monospace; line-height:1.5;
+  }
 
   .end-emoji{ font-size:64px; text-align:center; margin: 30px 0 6px; }
   .footer-note{
@@ -370,17 +442,77 @@
 
     <div class="card" id="cardBox">
       <div class="card-alpha-tag hidden" id="alphaTag">Carta Alfa</div>
-      <div class="card-emoji" id="cardEmoji">🐾</div>
-      <div class="card-name" id="cardName">&nbsp;</div>
-      <div class="card-species" id="cardSpecies">&nbsp;</div>
+      <div class="card-image-wrap">
+        <img class="card-image" id="cardImage" alt="">
+        <span class="card-image-emoji" id="cardImageEmoji"></span>
+      </div>
+      <div class="card-head-row">
+        <div>
+          <div class="card-name" id="cardName">&nbsp;</div>
+          <div class="card-species" id="cardSpecies">&nbsp;</div>
+        </div>
+        <div class="card-actions">
+          <button class="icon-btn hidden" id="btnCardSound" type="button" title="Ouvir som">&#128266;</button>
+          <button class="icon-btn" id="btnCardInfo" type="button" title="Saiba mais">i</button>
+        </div>
+      </div>
       <div id="attrList"></div>
     </div>
 
     <div class="result-panel hidden" id="resultPanel">
       <div class="big" id="resultBig"></div>
+      <div class="result-versus" id="resultVersus">
+        <div class="result-side">
+          <img class="result-thumb" id="resultMyImg" alt="">
+          <div class="result-side-label" id="resultMyLabel">Você</div>
+          <div class="result-side-value" id="resultMyValue"></div>
+        </div>
+        <div class="result-vs-label">&times;</div>
+        <div class="result-side">
+          <img class="result-thumb" id="resultOppImg" alt="">
+          <div class="result-side-label" id="resultOppLabel"></div>
+          <div class="result-side-value" id="resultOppValue"></div>
+        </div>
+      </div>
       <div id="resultDetail"></div>
+      <button class="btn btn-primary result-next-btn" id="btnNextRound" type="button">Próxima carta &rarr;</button>
     </div>
   </div>
+
+  <!-- MODAL: VERSO DA CARTA -->
+  <div class="modal-overlay hidden" id="infoModal">
+    <div class="modal-sheet">
+      <button class="modal-close" id="btnCloseInfo" type="button">&times;</button>
+      <img class="modal-image" id="modalImage" alt="">
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-species" id="modalSpecies"></div>
+      <button class="btn btn-ghost modal-sound-btn hidden" id="modalSoundBtn" type="button">&#128266; Ouvir som</button>
+      <div class="modal-section">
+        <h3>Habitat</h3>
+        <p id="modalHabitat"></p>
+      </div>
+      <div class="modal-section">
+        <h3>Alimentação</h3>
+        <p id="modalDieta"></p>
+      </div>
+      <div class="modal-section">
+        <h3>Comportamento social</h3>
+        <p id="modalComportamento"></p>
+      </div>
+      <div class="modal-section">
+        <h3>Conservação</h3>
+        <p id="modalConservacao"></p>
+      </div>
+      <div class="modal-section">
+        <h3>Curiosidades</h3>
+        <ul id="modalCuriosidades"></ul>
+      </div>
+      <a class="modal-wiki-link" id="modalWikiLink" href="#" target="_blank" rel="noopener">Ver artigo completo na Wikipédia &rarr;</a>
+      <div class="modal-credit" id="modalCredit"></div>
+    </div>
+  </div>
+
+  <audio id="sfxAudio" preload="none"></audio>
 
   <!-- SCREEN: END -->
   <div class="screen hidden" id="screen-end">
@@ -405,35 +537,135 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ==========================================================================
    BARALHO DE TESTE (4 animais, dados verificados)
-   Fontes: National Geographic, Smithsonian National Zoo, WWF, Wikipedia.
-   Atributos: maior valor sempre vence.
+   Fontes por carta em info.fontes. Imagens e sons: Wikimedia Commons
+   (licenças CC BY-SA / CC BY / domínio público, créditos em image.author /
+   sound.author). Atributos: maior valor sempre vence.
    TODO: expandir para 32 animais em lotes verificados.
    ========================================================================== */
 const DECK = [
   {
     id: 'guepardo', name: 'Guepardo', species: 'Acinonyx jubatus', emoji: '🐆',
-    attrs: { peso_kg: 50, velocidade_kmh: 104, expectativa_anos: 12 }
+    attrs: { peso_kg: 50, velocidade_kmh: 104, expectativa_anos: 12, altura_cm: 77, populacao_estimada: 7100 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/3/36/Cheetah_%28Acinonyx_jubatus%29_female_2.jpg',
+      author: 'Charles J. Sharp', license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Acinonyx_jubatus',
+    info: {
+      habitat: 'O guepardo vive nas savanas e planícies abertas da África, com uma pequena população isolada no Irã. Prefere áreas de vegetação rasteira, onde consegue avistar presas à distância e usar sua velocidade sem obstáculos.',
+      alimentacao: 'É um caçador carnívoro que persegue animais de médio porte, como gazelas, impalas e filhotes de gnu, além de lebres e aves. Diferente de outros grandes felinos, caça de dia, aproveitando sua visão aguçada.',
+      comportamento: 'As fêmeas vivem sozinhas, cuidando dos filhotes sem ajuda de outros adultos, enquanto os machos costumam formar pequenos grupos (coalizões) com irmãos de ninhada, que permanecem juntos por toda a vida.',
+      conservacao: 'Classificado como "Vulnerável" pela IUCN, com menos de 7.100 adultos restantes na natureza; a principal ameaça é a perda de habitat e o conflito com humanos.',
+      curiosidades: [
+        'O guepardo é o animal terrestre mais rápido do mundo, podendo acelerar de 0 a 100 km/h em cerca de 3 segundos.',
+        'Suas garras são semi-retráteis, funcionando como cravos de tênis para dar tração durante a corrida.',
+        'Tem "marcas de lágrima" — linhas escuras dos olhos até a boca — que ajudam a reduzir o brilho do sol durante a caça.',
+        'Diferente de leões e tigres, o guepardo não ruge — mas pode ronronar como um gato doméstico.',
+        'Filhotes nascem com uma "capa" de pelos claros nas costas, que os camufla e os faz parecer filhotes de texugo-do-mel.'
+      ],
+      fontes: 'National Geographic, Smithsonian National Zoo, Wikipédia, Cheetah Conservation Fund, IUCN Red List'
+    }
   },
   {
     id: 'elefante', name: 'Elefante-africano', species: 'Loxodonta africana', emoji: '🐘',
-    attrs: { peso_kg: 6000, velocidade_kmh: 40, expectativa_anos: 65 }
+    attrs: { peso_kg: 6000, velocidade_kmh: 40, expectativa_anos: 70, altura_cm: 320, populacao_estimada: 415000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/9/94/178_Male_African_bush_elephant_in_Etosha_National_Park_Photo_by_Giles_Laurent.jpg',
+      author: 'Giles Laurent', license: 'CC BY-SA 4.0'
+    },
+    sound: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Bee-Threat-Elicits-Alarm-Call-in-African-Elephants-pone.0010346.s001.ogg',
+      description: 'ronco de alarme (grupo reagindo a ameaça de abelhas)',
+      author: 'King, Soltis, Douglas-Hamilton, Savage & Vollrath', license: 'CC BY 2.5'
+    },
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Elefante-da-savana',
+    info: {
+      habitat: 'O elefante-africano vive em savanas, florestas, pastagens e até áreas semidesérticas na África Subsaariana, sempre precisando de acesso regular à água.',
+      alimentacao: 'É herbívoro e passa até 16 horas por dia comendo capim, folhas, cascas de árvores e frutos, consumindo cerca de 150 a 225 kg de vegetação por dia.',
+      comportamento: 'As fêmeas vivem em grupos familiares (manadas) liderados pela matriarca mais velha e experiente, enquanto os machos adultos costumam viver sozinhos ou em pequenos grupos de solteiros.',
+      conservacao: 'Classificado como "Em Perigo" pela IUCN desde 2021, principalmente devido à caça ilegal por marfim e à perda de habitat.',
+      curiosidades: [
+        'A tromba do elefante tem mais de 40 mil músculos e é usada para respirar, cheirar, beber, comer e até se comunicar.',
+        'A gestação da elefanta dura cerca de 22 meses — a mais longa entre todos os mamíferos terrestres.',
+        'Um filhote recém-nascido já pesa cerca de 90 kg e mede cerca de 90 cm de altura.',
+        'Os elefantes se comunicam por infrassom, sons tão graves que viajam por quilômetros e são inaudíveis para o ouvido humano.',
+        'É o maior animal terrestre vivo do planeta.'
+      ],
+      fontes: 'Wikipédia, IUCN Red List, San Diego Zoo Wildlife Alliance'
+    }
   },
   {
     id: 'leao', name: 'Leão', species: 'Panthera leo', emoji: '🦁',
-    attrs: { peso_kg: 190, velocidade_kmh: 80, expectativa_anos: 13 }
+    attrs: { peso_kg: 190, velocidade_kmh: 80, expectativa_anos: 12, altura_cm: 120, populacao_estimada: 23000 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/9/9e/Lion_%28Panthera_leo%29_male_6y.jpg',
+      author: 'Charles J. Sharp', license: 'CC BY-SA 4.0'
+    },
+    sound: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/7/7d/Lion_raring-sound1TamilNadu178.ogg',
+      description: 'rugido', author: 'gravação em zoológico, Tamil Nadu', license: 'Domínio público'
+    },
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Le%C3%A3o',
+    info: {
+      habitat: 'O leão vive em savanas, campos abertos e florestas secas de espinheiros na África Subsaariana, com uma pequena população isolada na Floresta de Gir, na Índia.',
+      alimentacao: 'É um predador de topo que caça principalmente grandes herbívoros, como zebras e gnus, mas também aproveita carcaças deixadas por outros animais.',
+      comportamento: 'Vive em grupos chamados de "alcateias" (prides), formados principalmente por fêmeas aparentadas que caçam em conjunto, enquanto os machos defendem o território do grupo.',
+      conservacao: 'Classificado como "Vulnerável" pela IUCN, com a principal ameaça sendo a perda de habitat e o conflito com populações humanas em expansão.',
+      curiosidades: [
+        'O rugido do leão pode ser ouvido a até 8 km de distância.',
+        'Os músculos esqueléticos representam quase 59% do peso corporal do leão.',
+        'A juba dos machos pode ter surgido evolutivamente entre 190 mil e 320 mil anos atrás.',
+        'O leão é o segundo maior felino vivo do planeta, atrás apenas do tigre.',
+        'A população selvagem de leões caiu cerca de 43% desde o início dos anos 1990.'
+      ],
+      fontes: 'Wikipédia, Smithsonian National Zoo, IUCN Red List, African Wildlife Foundation'
+    }
   },
   {
     id: 'girafa', name: 'Girafa', species: 'Giraffa camelopardalis', emoji: '🦒',
-    attrs: { peso_kg: 1200, velocidade_kmh: 55, expectativa_anos: 22 }
+    attrs: { peso_kg: 1192, velocidade_kmh: 60, expectativa_anos: 25, altura_cm: 570, populacao_estimada: 97500 },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/8/89/Three_giraffes_01.jpg',
+      author: 'Volodymyr Burdiak', license: 'CC BY-SA 4.0'
+    },
+    sound: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/a/a8/Giraffe_Hum.oga',
+      description: 'zumbido noturno (raro registro documentado — girafas são quase silenciosas)',
+      author: 'Baotic, Sicks & Stoeger (estudo científico)', license: 'CC BY-SA 4.0'
+    },
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Girafa',
+    info: {
+      habitat: 'A girafa vive nas savanas e áreas de vegetação aberta ao sul do Saara, na África, onde encontra árvores altas para se alimentar e enxergar predadores à distância.',
+      alimentacao: 'Usa sua língua preênsil escura, de até 50 cm de comprimento, para arrancar folhas de acácias entre os espinhos sem se machucar. Como as folhas têm pouco valor nutritivo, passa quase 20 horas por dia comendo.',
+      comportamento: 'Vive em grupos abertos e pouco estruturados, sem laços fixos entre os membros, e costuma se associar com antílopes e avestruzes, formando um sistema de vigilância coletiva contra predadores.',
+      conservacao: 'Classificada como "Vulnerável" pela IUCN (avaliação da espécie única); a caça ilegal e a perda de habitat são as principais ameaças, e algumas subpopulações estão em situação bem mais crítica que a média.',
+      curiosidades: [
+        'Cada girafa tem um padrão de manchas completamente único, como uma impressão digital.',
+        'Apesar do pescoço gigante, a girafa tem exatamente sete vértebras cervicais — o mesmo número que um ser humano, só que bem maiores.',
+        'Tem a maior pressão sanguínea entre os mamíferos terrestres, necessária para bombear sangue até o cérebro.',
+        'Consegue correr até 60 km/h em disparadas curtas, mesmo sendo tão alta e de pernas longas.',
+        'Dorme muito pouco — geralmente menos de 2 horas por dia, quase sempre em pé.'
+      ],
+      fontes: 'Wikipédia, Save Giraffes Now, San Diego Zoo Wildlife Alliance, Giraffe Conservation Foundation'
+    }
   }
 ];
 
 const ATTR_LABELS = {
-  peso_kg: 'Peso (kg)',
-  velocidade_kmh: 'Velocidade máx. (km/h)',
-  expectativa_anos: 'Expectativa de vida (anos)'
+  peso_kg: { label: 'Peso', unit: 'kg' },
+  velocidade_kmh: { label: 'Velocidade Máx.', unit: 'km/h' },
+  expectativa_anos: { label: 'Expectativa de vida', unit: 'anos' },
+  altura_cm: { label: 'Altura', unit: 'cm' },
+  populacao_estimada: { label: 'População estimada', unit: '' }
 };
-const ATTR_ORDER = ['peso_kg', 'velocidade_kmh', 'expectativa_anos'];
+const ATTR_ORDER = ['peso_kg', 'velocidade_kmh', 'expectativa_anos', 'altura_cm', 'populacao_estimada'];
+
+function formatAttrValue(attr, value){
+  const meta = ATTR_LABELS[attr];
+  const num = value.toLocaleString('pt-BR');
+  return meta.unit ? (num + ' ' + meta.unit) : num;
+}
 
 function shuffledDeck(){
   const d = DECK.slice();
@@ -709,9 +941,7 @@ function renderGame(){
   const alphaTag = document.getElementById('alphaTag');
   if(!card){ return; }
 
-  document.getElementById('cardEmoji').textContent = card.emoji;
-  document.getElementById('cardName').textContent = card.name;
-  document.getElementById('cardSpecies').textContent = card.species;
+  renderCardFace(card);
   alphaTag.classList.add('hidden');
 
   const isMyTurn = state.turn === myRole();
@@ -725,8 +955,8 @@ function renderGame(){
     const row = document.createElement('div');
     row.className = 'attr-row' + (isMyTurn && !state.resolving ? ' pickable' : '');
     row.innerHTML =
-      '<span class="attr-label">' + ATTR_LABELS[attr] + '</span>' +
-      '<span class="attr-value">' + card.attrs[attr] + '</span>';
+      '<span class="attr-label">' + ATTR_LABELS[attr].label + '</span>' +
+      '<span class="attr-value">' + formatAttrValue(attr, card.attrs[attr]) + '</span>';
     if(isMyTurn && !state.resolving){
       row.addEventListener('click', () => chooseAttribute(attr));
     }
@@ -735,6 +965,79 @@ function renderGame(){
 
   document.getElementById('resultPanel').classList.add('hidden');
 }
+
+function renderCardFace(card){
+  document.getElementById('cardImage').src = card.image.url;
+  document.getElementById('cardImage').alt = card.name;
+  document.getElementById('cardImageEmoji').textContent = card.emoji;
+  document.getElementById('cardName').textContent = card.name;
+  document.getElementById('cardSpecies').textContent = card.species;
+
+  const soundBtn = document.getElementById('btnCardSound');
+  soundBtn.classList.toggle('hidden', !card.sound);
+  soundBtn.onclick = () => playCardSound(card);
+
+  document.getElementById('btnCardInfo').onclick = () => openInfoModal(card);
+}
+
+/* ==========================================================================
+   SOM E VERSO DA CARTA (inspirado no app "Trump Cards")
+   ========================================================================== */
+function playCardSound(card){
+  if(!card.sound) return;
+  const audio = document.getElementById('sfxAudio');
+  audio.src = card.sound.url;
+  audio.play().catch(() => {});
+}
+
+function openInfoModal(card){
+  document.getElementById('modalImage').src = card.image.url;
+  document.getElementById('modalImage').alt = card.name;
+  document.getElementById('modalTitle').textContent = card.emoji + ' ' + card.name;
+  document.getElementById('modalSpecies').textContent = card.species;
+
+  const soundBtn = document.getElementById('modalSoundBtn');
+  if(card.sound){
+    soundBtn.classList.remove('hidden');
+    soundBtn.textContent = '🔊 Ouvir: ' + card.sound.description;
+    soundBtn.onclick = () => playCardSound(card);
+  } else {
+    soundBtn.classList.add('hidden');
+  }
+
+  document.getElementById('modalHabitat').textContent = card.info.habitat;
+  document.getElementById('modalDieta').textContent = card.info.alimentacao;
+  document.getElementById('modalComportamento').textContent = card.info.comportamento;
+  document.getElementById('modalConservacao').textContent = card.info.conservacao;
+
+  const ul = document.getElementById('modalCuriosidades');
+  ul.innerHTML = '';
+  card.info.curiosidades.forEach(c => {
+    const li = document.createElement('li');
+    li.textContent = c;
+    ul.appendChild(li);
+  });
+
+  const wikiLink = document.getElementById('modalWikiLink');
+  wikiLink.href = card.wikipediaUrl;
+
+  const soundCredit = card.sound ? (' · Som: ' + card.sound.author + ' (' + card.sound.license + ')') : '';
+  document.getElementById('modalCredit').textContent =
+    'Foto: ' + card.image.author + ' (' + card.image.license + ')' + soundCredit +
+    ' · Wikimedia Commons · Fontes dos dados: ' + card.info.fontes;
+
+  document.getElementById('infoModal').classList.remove('hidden');
+}
+
+function closeInfoModal(){
+  document.getElementById('infoModal').classList.add('hidden');
+  document.getElementById('sfxAudio').pause();
+}
+
+document.getElementById('btnCloseInfo').addEventListener('click', closeInfoModal);
+document.getElementById('infoModal').addEventListener('click', (e) => {
+  if(e.target.id === 'infoModal') closeInfoModal();
+});
 
 /* ==========================================================================
    LÓGICA DE RODADA
@@ -757,7 +1060,7 @@ function chooseAttribute(attr){
   });
 
   renderGame();
-  document.getElementById('turnBanner').textContent = 'Você escolheu: ' + ATTR_LABELS[attr];
+  document.getElementById('turnBanner').textContent = 'Você escolheu: ' + ATTR_LABELS[attr].label;
 }
 
 function onOpponentChoose(payload){
@@ -798,7 +1101,7 @@ function resolveRound(){
   else if(myVal < oppVal) outcome = 'lose';
   else outcome = 'tie';
 
-  showRoundResult(myCard, attr, myVal, oppVal, outcome);
+  showRoundResult(myCard, attr, myVal, oppVal, outcome, oppCard);
 
   if(outcome === 'tie'){
     // as duas cartas ficam "presas" na mesa até alguém vencer uma rodada seguinte.
@@ -824,24 +1127,36 @@ function resolveRound(){
 
   state.myChoice = null;
   state.oppChoice = null;
-
-  setTimeout(() => {
-    state.resolving = false;
-    checkGameOver();
-  }, 1800);
 }
 
-function showRoundResult(myCard, attr, myVal, oppVal, outcome){
+function showRoundResult(myCard, attr, myVal, oppVal, outcome, oppCard){
   const panel = document.getElementById('resultPanel');
   panel.classList.remove('hidden');
-  const label = ATTR_LABELS[attr];
+  const meta = ATTR_LABELS[attr];
   let text;
   if(outcome === 'win') text = 'Você venceu a rodada! 🎉';
   else if(outcome === 'lose') text = state.oppName + ' venceu a rodada.';
   else text = 'Empate — cartas ficam na mesa.';
   document.getElementById('resultBig').textContent = text;
-  document.getElementById('resultDetail').textContent =
-    label + ': você ' + myVal + '  ×  ' + oppVal + ' ' + state.oppName;
+  document.getElementById('resultDetail').textContent = meta.label;
+
+  document.getElementById('resultMyImg').src = myCard.image.url;
+  document.getElementById('resultMyImg').alt = myCard.name;
+  document.getElementById('resultMyValue').textContent = formatAttrValue(attr, myVal);
+
+  document.getElementById('resultOppImg').src = oppCard.image.url;
+  document.getElementById('resultOppImg').alt = oppCard.name;
+  document.getElementById('resultOppLabel').textContent = oppCard.name;
+  document.getElementById('resultOppValue').textContent = formatAttrValue(attr, oppVal);
+
+  document.getElementById('resultMyImg').closest('.result-side').classList.toggle('winner', outcome === 'win');
+  document.querySelector('#resultOppImg').closest('.result-side').classList.toggle('winner', outcome === 'lose');
+
+  const nextBtn = document.getElementById('btnNextRound');
+  nextBtn.onclick = () => {
+    state.resolving = false;
+    checkGameOver();
+  };
 }
 
 function checkGameOver(){
