@@ -186,20 +186,44 @@
     font-family:'IBM Plex Mono', monospace; white-space:pre-line; opacity:0.85;
   }
 
+  /* --- LOBBY: LISTA DE JOGADORES --- */
+  .player-list{
+    display:flex; flex-direction:column; gap:8px;
+    margin: 4px 0 18px;
+  }
+  .player-list.hidden{ display:none !important; }
+  .player-chip{
+    background: var(--surface);
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:14px;
+    display:flex; align-items:baseline; gap:6px;
+  }
+  .player-chip-tag{
+    color: var(--accent);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+  }
+
   /* --- GAME SCREEN --- */
   .score-bar{
-    display:flex; align-items:center; justify-content:space-between;
-    background: var(--surface);
-    border-radius: 12px;
-    padding: 10px 16px;
+    display:flex; flex-wrap:wrap; gap:8px;
     margin-bottom: 18px;
     font-family:'IBM Plex Mono', monospace;
-    font-size:13px;
   }
-  .score-side{ display:flex; align-items:center; gap:8px; }
-  .score-name{ color: var(--muted); }
+  .score-chip{
+    flex:1; min-width:72px;
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 8px 10px;
+    border: 1px solid transparent;
+  }
+  .score-chip.turn{ border-color: var(--accent); }
+  .score-chip.out{ opacity:0.4; }
+  .score-name{ color: var(--muted); font-size:11px; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .score-chip.me .score-name{ color: var(--accent); }
   .score-count{ color:#fff; font-weight:600; font-size:16px; }
-  .score-vs{ color: var(--accent-dark); font-weight:600; }
   .pot-note{
     text-align:center; font-size:11px; color: var(--accent);
     font-family:'IBM Plex Mono', monospace; margin: -10px 0 14px;
@@ -300,19 +324,18 @@
     font-family:'Bricolage Grotesque', sans-serif;
     font-weight:800; font-size:20px; margin-bottom:6px;
   }
-  .result-versus{
-    display:flex; align-items:center; justify-content:center; gap:18px;
+  .result-list{
+    display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:center; gap:14px;
     margin: 14px 0 4px;
   }
-  .result-side{ display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .result-entry{ display:flex; flex-direction:column; align-items:center; gap:4px; width:64px; }
   .result-thumb{
     width:56px; height:56px; object-fit:cover; border-radius:10px;
     border:2px solid var(--surface-2);
   }
-  .result-side.winner .result-thumb{ border-color: var(--accent); }
-  .result-side-label{ font-size:11px; color: var(--muted); max-width:100px; }
+  .result-entry.winner .result-thumb{ border-color: var(--accent); }
+  .result-side-label{ font-size:11px; color: var(--muted); max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .result-side-value{ font-family:'IBM Plex Mono', monospace; font-weight:700; font-size:15px; }
-  .result-vs-label{ color: var(--accent-dark); font-weight:700; }
   .result-next-btn{ margin-top:16px; }
   .hidden{ display:none !important; }
 
@@ -405,37 +428,31 @@
   <!-- SCREEN: WAITING (host) -->
   <div class="screen hidden" id="screen-waiting">
     <h1 class="title">Sala criada</h1>
-    <p class="lede">Peça para o outro jogador abrir o link e digitar este código na tela dele.</p>
+    <p class="lede">Peça para os outros jogadores (até 4 no total) abrirem o link e digitarem este código.</p>
     <div class="code-display">
       <div class="code" id="roomCodeDisplay">----</div>
       <div class="hint">código da sala</div>
     </div>
-    <div class="spinner"></div>
-    <div class="status-line" id="waitingStatus">Aguardando o outro jogador entrar&hellip;</div>
+    <div class="player-list" id="waitingPlayerList"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnStartGame" disabled>Começar jogo</button>
+    </div>
+    <div class="status-line" id="waitingStatus">Aguardando jogadores&hellip; (mínimo 2, máximo 4)</div>
     <div class="debug-line" id="debugWaiting"></div>
   </div>
 
   <!-- SCREEN: CONNECTING (guest) -->
   <div class="screen hidden" id="screen-connecting">
-    <h1 class="title">Conectando&hellip;</h1>
+    <h1 class="title">Sala <span id="connectingRoomCode"></span></h1>
     <div class="spinner"></div>
     <div class="status-line" id="connectingStatus">Entrando na sala</div>
+    <div class="player-list hidden" id="connectingPlayerList"></div>
     <div class="debug-line" id="debugConnecting"></div>
   </div>
 
   <!-- SCREEN: GAME -->
   <div class="screen hidden" id="screen-game">
-    <div class="score-bar">
-      <div class="score-side">
-        <span class="score-name" id="meLabel">Você</span>
-        <span class="score-count" id="myCount">0</span>
-      </div>
-      <span class="score-vs">vs</span>
-      <div class="score-side">
-        <span class="score-count" id="oppCount">0</span>
-        <span class="score-name" id="oppLabel">Adversário</span>
-      </div>
-    </div>
+    <div class="score-bar" id="scoreBar"></div>
     <div class="pot-note" id="potNote"></div>
 
     <div class="turn-banner" id="turnBanner">&mdash;</div>
@@ -461,20 +478,8 @@
 
     <div class="result-panel hidden" id="resultPanel">
       <div class="big" id="resultBig"></div>
-      <div class="result-versus" id="resultVersus">
-        <div class="result-side">
-          <img class="result-thumb" id="resultMyImg" alt="">
-          <div class="result-side-label" id="resultMyLabel">Você</div>
-          <div class="result-side-value" id="resultMyValue"></div>
-        </div>
-        <div class="result-vs-label">&times;</div>
-        <div class="result-side">
-          <img class="result-thumb" id="resultOppImg" alt="">
-          <div class="result-side-label" id="resultOppLabel"></div>
-          <div class="result-side-value" id="resultOppValue"></div>
-        </div>
-      </div>
       <div id="resultDetail"></div>
+      <div class="result-list" id="resultList"></div>
       <button class="btn btn-primary result-next-btn" id="btnNextRound" type="button">Próxima carta &rarr;</button>
     </div>
   </div>
@@ -1379,28 +1384,51 @@ function shuffledDeck(){
 }
 
 /* ==========================================================================
-   ESTADO
+   ESTADO (suporta de 2 a 4 jogadores por sala)
    ========================================================================== */
+const MAX_PLAYERS = 4;
+
 const state = {
-  role: null,        // 'host' | 'guest'
+  myId: null,
+  isHost: false,
   roomCode: null,
   channel: null,
   myName: 'Você',
-  oppName: 'Adversário',
+  players: [],          // [{id, name}] — players[0] é sempre o host (quem criou a sala)
+  started: false,
   myPile: [],
-  oppCount: 0,
+  pileCounts: {},        // {playerId: quantidade} — para os OUTROS jogadores (a minha própria é myPile.length)
   pot: [],
-  turn: null,        // 'host' | 'guest'
-  myChoice: null,    // {attribute, value}
-  oppChoice: null,   // {attribute, value}
+  turnPlayerId: null,
+  roundAttribute: null,
+  roundReveals: {},      // {playerId: {cardId, value}} — revelações da rodada atual
   resolving: false,
-  dealt: false,      // host: já mandou o 'deal'? (permite reenviar se receber 'join' de novo)
-  joinAckd: false,   // guest: já recebeu o 'deal'? (permite parar de reenviar 'join')
+  joinAckd: false,       // guest: já recebi confirmação de que estou na sala? (permite parar de reenviar 'join')
   joinRetryTimer: null
 };
 
-function myRole(){ return state.role; }
-function oppRole(){ return state.role === 'host' ? 'guest' : 'host'; }
+function generateId(){
+  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
+
+function pileCountOf(id){
+  return id === state.myId ? state.myPile.length : (state.pileCounts[id] || 0);
+}
+
+function activePlayers(){
+  return state.players.filter(p => pileCountOf(p.id) > 0);
+}
+
+function playerName(id){
+  if(id === state.myId) return 'Você';
+  const p = state.players.find(p => p.id === id);
+  return p ? p.name : '???';
+}
+
+function joinWithAnd(names){
+  if(names.length <= 1) return names.join('');
+  return names.slice(0, -1).join(', ') + ' e ' + names[names.length - 1];
+}
 
 /* ==========================================================================
    EFEITOS SONOROS DE INTERFACE (sintetizados via Web Audio API — sem
@@ -1479,11 +1507,12 @@ function playResultSound(outcome){
 const debugState = { channelStatus: '(nenhum)', joinAttempts: 0, joinsReceived: 0 };
 function renderDebug(){
   const lines = [
-    'papel: ' + (state.role || '-') + ' | sala: ' + (state.roomCode || '-'),
-    'status do canal: ' + debugState.channelStatus
+    'papel: ' + (state.myId ? (state.isHost ? 'host' : 'guest') : '-') + ' | sala: ' + (state.roomCode || '-'),
+    'status do canal: ' + debugState.channelStatus,
+    'jogadores na sala: ' + state.players.length
   ];
-  if(state.role === 'guest') lines.push('tentativas de join enviadas: ' + debugState.joinAttempts);
-  if(state.role === 'host') lines.push('joins recebidos: ' + debugState.joinsReceived);
+  if(!state.isHost) lines.push('tentativas de join enviadas: ' + debugState.joinAttempts);
+  if(state.isHost) lines.push('joins recebidos: ' + debugState.joinsReceived);
   const txt = lines.join('\n');
   const w = document.getElementById('debugWaiting');
   const c = document.getElementById('debugConnecting');
@@ -1523,16 +1552,24 @@ document.getElementById('btnCreate').addEventListener('click', () => {
   unlockAudio();
   const name = document.getElementById('playerName').value.trim();
   state.myName = name || 'Jogador 1';
-  state.role = 'host';
+  state.myId = generateId();
+  state.isHost = true;
   state.roomCode = randomCode();
+  state.players = [{ id: state.myId, name: state.myName }];
 
   document.getElementById('roomCodeDisplay').textContent = state.roomCode;
   showScreen('waiting');
+  renderWaitingList();
   renderDebug();
 
   connectChannel(state.roomCode, () => {
-    document.getElementById('waitingStatus').textContent = 'Aguardando o outro jogador entrar…';
+    renderWaitingList();
   });
+});
+
+document.getElementById('btnStartGame').addEventListener('click', () => {
+  if(!state.isHost || state.players.length < 2 || state.started) return;
+  startGameAsHost();
 });
 
 /* ==========================================================================
@@ -1546,14 +1583,16 @@ document.getElementById('btnJoin').addEventListener('click', () => {
     toast('Digite o código de 4 caracteres da sala.');
     return;
   }
-  state.myName = name || 'Jogador 2';
-  state.role = 'guest';
+  state.myName = name || 'Jogador';
+  state.myId = generateId();
+  state.isHost = false;
   state.roomCode = code;
 
+  document.getElementById('connectingRoomCode').textContent = code;
   showScreen('connecting');
   renderDebug();
   connectChannel(code, () => {
-    document.getElementById('connectingStatus').textContent = 'Conectado. Aguardando o baralho…';
+    document.getElementById('connectingStatus').textContent = 'Conectado. Avisando o host&hellip;';
     sendJoinWithRetry();
   });
 });
@@ -1561,8 +1600,8 @@ document.getElementById('btnJoin').addEventListener('click', () => {
 /* ==========================================================================
    RETRY DO 'join' (broadcast não garante entrega: se o host ainda não
    tiver terminado de se inscrever no canal no instante do envio, a
-   mensagem some sem erro nenhum. Reenviamos periodicamente até o host
-   confirmar com 'deal'.)
+   mensagem some sem erro nenhum. Reenviamos periodicamente até recebermos
+   uma lista de jogadores ('roster') que já nos inclua.)
    ========================================================================== */
 function sendJoinWithRetry(){
   state.joinAckd = false;
@@ -1574,7 +1613,7 @@ function sendJoinWithRetry(){
     state.channel.send({
       type: 'broadcast',
       event: 'join',
-      payload: { name: state.myName }
+      payload: { id: state.myId, name: state.myName }
     });
   };
   attempt();
@@ -1592,46 +1631,73 @@ function connectChannel(code, onReady){
 
   channel.on('broadcast', { event: 'join' }, ({ payload }) => {
     console.log('[Duelo Selvagem] evento join recebido:', payload);
-    if(state.role !== 'host') return;
+    if(!state.isHost) return;
     debugState.joinsReceived++;
     renderDebug();
-    state.oppName = payload.name;
-    // idempotente: se o guest reenviar 'join' (porque não recebeu o 'deal'
-    // anterior — broadcast não garante entrega), reenviamos o mesmo baralho
-    // já sorteado em vez de sortear de novo.
-    if(state.dealt){
-      resendDeal();
-    } else {
-      dealAndStart();
+
+    if(state.started){
+      // partida já começou: não dá pra entrar no meio, avisamos o guest
+      state.channel.send({ type: 'broadcast', event: 'gameStarted', payload: {} });
+      return;
+    }
+
+    const exists = state.players.some(p => p.id === payload.id);
+    if(!exists){
+      if(state.players.length >= MAX_PLAYERS){
+        state.channel.send({ type: 'broadcast', event: 'roomFull', payload: {} });
+        return;
+      }
+      state.players.push({ id: payload.id, name: payload.name });
+    }
+    // sempre reenviamos o roster (idempotente): cobre tanto o primeiro join
+    // quanto reenvios de guests que não receberam a confirmação anterior.
+    broadcastRoster();
+    renderWaitingList();
+  });
+
+  channel.on('broadcast', { event: 'roster' }, ({ payload }) => {
+    console.log('[Duelo Selvagem] roster recebido:', payload.players);
+    state.players = payload.players;
+    const amIIn = state.players.some(p => p.id === state.myId);
+    if(amIIn && state.joinRetryTimer){
+      clearInterval(state.joinRetryTimer);
+      state.joinRetryTimer = null;
+      state.joinAckd = true;
+      document.getElementById('connectingStatus').textContent = 'Na sala! Aguardando o host começar…';
+    }
+    renderWaitingList();
+  });
+
+  channel.on('broadcast', { event: 'roomFull' }, () => {
+    if(!state.joinAckd){
+      toast('Essa sala já está cheia (máximo de ' + MAX_PLAYERS + ' jogadores).');
     }
   });
 
-  channel.on('broadcast', { event: 'deal' }, ({ payload }) => {
-    console.log('[Duelo Selvagem] evento deal recebido:', payload);
-    if(state.role !== 'guest') return;
-    if(state.joinRetryTimer){
-      clearInterval(state.joinRetryTimer);
-      state.joinRetryTimer = null;
+  channel.on('broadcast', { event: 'gameStarted' }, () => {
+    if(!state.joinAckd){
+      if(state.joinRetryTimer){ clearInterval(state.joinRetryTimer); state.joinRetryTimer = null; }
+      document.getElementById('connectingStatus').textContent = 'Essa partida já começou. Peça pro host criar uma nova sala.';
     }
-    if(state.joinAckd) return; // já processamos o primeiro 'deal'; ignora reenvios
-    state.joinAckd = true;
-    state.oppName = payload.hostName;
-    state.myPile = payload.guestPile;
-    state.oppCount = payload.hostPileCount;
-    state.turn = payload.turn;
-    startGameScreen();
+  });
+
+  channel.on('broadcast', { event: 'start' }, ({ payload }) => {
+    console.log('[Duelo Selvagem] evento start recebido');
+    if(state.isHost) return; // host já aplicou localmente ao clicar em "Começar"
+    if(state.joinRetryTimer){ clearInterval(state.joinRetryTimer); state.joinRetryTimer = null; }
+    applyStart(payload);
   });
 
   channel.on('broadcast', { event: 'choose' }, ({ payload }) => {
-    onOpponentChoose(payload);
+    onRoundChoose(payload);
   });
 
   channel.on('broadcast', { event: 'reveal' }, ({ payload }) => {
-    onOpponentReveal(payload);
+    onRoundReveal(payload);
   });
 
   channel.on('broadcast', { event: 'rematch' }, () => {
-    toast(state.oppName + ' quer jogar de novo. Recarregue a página para uma nova sala.');
+    toast('Alguém quer jogar de novo. Recarregue a página para uma nova sala.');
   });
 
   channel.subscribe((status, err) => {
@@ -1651,48 +1717,88 @@ function connectChannel(code, onReady){
   });
 }
 
-/* ==========================================================================
-   DISTRIBUIÇÃO DE CARTAS (executada pelo HOST)
-   ========================================================================== */
-function dealAndStart(){
-  const deck = shuffledDeck();
-  const half = Math.floor(deck.length / 2);
-  const hostPile = deck.slice(0, half);
-  const guestPile = deck.slice(half);
-
-  state.myPile = hostPile;
-  state.oppCount = guestPile.length;
-  state.turn = 'host'; // host sempre inicia nesta versão
-
-  state.dealtGuestPile = guestPile; // guardado para poder reenviar se o guest não confirmar
-  state.dealt = true;
-
+function broadcastRoster(){
   state.channel.send({
     type: 'broadcast',
-    event: 'deal',
-    payload: {
-      hostName: state.myName,
-      guestPile: guestPile,
-      hostPileCount: hostPile.length,
-      turn: 'host'
-    }
+    event: 'roster',
+    payload: { players: state.players }
   });
-
-  startGameScreen();
 }
 
-function resendDeal(){
-  console.log('[Duelo Selvagem] reenviando deal (guest reenviou join)');
-  state.channel.send({
-    type: 'broadcast',
-    event: 'deal',
-    payload: {
-      hostName: state.myName,
-      guestPile: state.dealtGuestPile,
-      hostPileCount: state.myPile.length,
-      turn: state.turn
+/* ==========================================================================
+   LOBBY (lista de jogadores + botão de início)
+   ========================================================================== */
+function renderWaitingList(){
+  const containers = [document.getElementById('waitingPlayerList'), document.getElementById('connectingPlayerList')].filter(Boolean);
+  containers.forEach(container => {
+    container.innerHTML = '';
+    state.players.forEach((p, i) => {
+      const chip = document.createElement('div');
+      chip.className = 'player-chip';
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = p.name;
+      chip.appendChild(nameSpan);
+      const tags = [];
+      if(i === 0) tags.push('host');
+      if(p.id === state.myId) tags.push('você');
+      if(tags.length){
+        const tag = document.createElement('span');
+        tag.className = 'player-chip-tag';
+        tag.textContent = '(' + tags.join(', ') + ')';
+        chip.appendChild(tag);
+      }
+      container.appendChild(chip);
+    });
+    if(container.id === 'connectingPlayerList'){
+      container.classList.toggle('hidden', state.players.length === 0);
     }
   });
+
+  const startBtn = document.getElementById('btnStartGame');
+  if(startBtn) startBtn.disabled = state.players.length < 2;
+
+  const waitingStatus = document.getElementById('waitingStatus');
+  if(waitingStatus && state.isHost){
+    waitingStatus.textContent = state.players.length < 2
+      ? 'Aguardando jogadores… (mínimo 2, máximo ' + MAX_PLAYERS + ')'
+      : state.players.length + ' jogador(es) na sala. Pode começar quando quiser.';
+  }
+}
+
+/* ==========================================================================
+   INÍCIO DA PARTIDA (executado pelo HOST ao clicar "Começar jogo")
+   ========================================================================== */
+function startGameAsHost(){
+  const deck = shuffledDeck();
+  const n = state.players.length;
+  const piles = {};
+  state.players.forEach(p => { piles[p.id] = []; });
+  deck.forEach((card, i) => {
+    const player = state.players[i % n];
+    piles[player.id].push(card.id);
+  });
+
+  const payload = {
+    players: state.players,
+    piles: piles,
+    turnPlayerId: state.players[0].id
+  };
+
+  state.channel.send({ type: 'broadcast', event: 'start', payload: payload });
+  applyStart(payload);
+}
+
+function applyStart(payload){
+  state.started = true;
+  state.players = payload.players;
+  state.myPile = (payload.piles[state.myId] || []).map(id => cardById(id));
+  state.pileCounts = {};
+  state.players.forEach(p => {
+    if(p.id !== state.myId) state.pileCounts[p.id] = (payload.piles[p.id] || []).length;
+  });
+  state.turnPlayerId = payload.turnPlayerId;
+  state.pot = [];
+  startGameScreen();
 }
 
 /* ==========================================================================
@@ -1700,29 +1806,56 @@ function resendDeal(){
    ========================================================================== */
 function startGameScreen(){
   showScreen('game');
-  document.getElementById('meLabel').textContent = state.myName;
-  document.getElementById('oppLabel').textContent = state.oppName;
   renderGame();
   playDealSound();
 }
 
+function renderScoreBar(){
+  const bar = document.getElementById('scoreBar');
+  bar.innerHTML = '';
+  state.players.forEach(p => {
+    const count = pileCountOf(p.id);
+    const chip = document.createElement('div');
+    chip.className = 'score-chip'
+      + (p.id === state.myId ? ' me' : '')
+      + (p.id === state.turnPlayerId ? ' turn' : '')
+      + (count <= 0 ? ' out' : '');
+    const nameEl = document.createElement('span');
+    nameEl.className = 'score-name';
+    nameEl.textContent = p.id === state.myId ? 'Você' : p.name;
+    const countEl = document.createElement('span');
+    countEl.className = 'score-count';
+    countEl.textContent = count;
+    chip.appendChild(nameEl);
+    chip.appendChild(countEl);
+    bar.appendChild(chip);
+  });
+}
+
 function renderGame(){
-  document.getElementById('myCount').textContent = state.myPile.length;
-  document.getElementById('oppCount').textContent = state.oppCount;
+  renderScoreBar();
   document.getElementById('potNote').textContent = state.pot.length > 0
     ? ('Empate! ' + state.pot.length + ' carta(s) acumulada(s) na mesa.')
     : '';
 
   const card = state.myPile[0];
   const alphaTag = document.getElementById('alphaTag');
-  if(!card){ return; }
+
+  if(!card){
+    // fiquei sem cartas: modo espectador até o fim da partida
+    document.getElementById('turnBanner').textContent = 'Você ficou sem cartas — aguardando o fim da partida…';
+    document.getElementById('turnBanner').classList.remove('mine');
+    document.getElementById('attrList').innerHTML = '';
+    document.getElementById('resultPanel').classList.add('hidden');
+    return;
+  }
 
   renderCardFace(card);
   alphaTag.classList.add('hidden');
 
-  const isMyTurn = state.turn === myRole();
+  const isMyTurn = state.turnPlayerId === state.myId;
   const banner = document.getElementById('turnBanner');
-  banner.textContent = isMyTurn ? 'Sua vez de escolher' : 'Vez de ' + state.oppName;
+  banner.textContent = isMyTurn ? 'Sua vez de escolher' : 'Vez de ' + playerName(state.turnPlayerId);
   banner.classList.toggle('mine', isMyTurn);
 
   const list = document.getElementById('attrList');
@@ -1825,110 +1958,150 @@ function cardById(id){
 
 function chooseAttribute(attr){
   if(state.resolving) return;
+  if(state.turnPlayerId !== state.myId) return;
   const card = state.myPile[0];
   const value = card.attrs[attr];
-  state.myChoice = { attribute: attr, value: value, cardId: card.id };
   state.resolving = true;
+  state.roundAttribute = attr;
+  state.roundReveals = {};
+  state.roundReveals[state.myId] = { cardId: card.id, value: value };
 
   state.channel.send({
     type: 'broadcast',
     event: 'choose',
-    payload: { attribute: attr, value: value, cardId: card.id }
+    payload: { playerId: state.myId, attribute: attr, cardId: card.id, value: value }
   });
 
   renderGame();
   document.getElementById('turnBanner').textContent = 'Você escolheu: ' + ATTR_LABELS[attr].label;
+  maybeResolveRound();
 }
 
-function onOpponentChoose(payload){
-  // eu NÃO sou quem escolheu: leio meu próprio valor pro mesmo atributo e devolvo
+function onRoundChoose(payload){
+  // alguém chamou a rodada: registro a escolha e, se eu ainda tiver carta,
+  // revelo meu próprio valor pro mesmo atributo pra todo mundo ver.
   state.resolving = true;
+  state.roundAttribute = payload.attribute;
+  state.roundReveals[payload.playerId] = { cardId: payload.cardId, value: payload.value };
+
   const myCard = state.myPile[0];
-  const myValue = myCard.attrs[payload.attribute];
-  state.oppChoice = { attribute: payload.attribute, value: payload.value, cardId: payload.cardId };
-  state.myChoice = { attribute: payload.attribute, value: myValue, cardId: myCard.id };
-
-  state.channel.send({
-    type: 'broadcast',
-    event: 'reveal',
-    payload: { attribute: payload.attribute, value: myValue, cardId: myCard.id }
-  });
-
-  resolveRound();
-}
-
-function onOpponentReveal(payload){
-  // eu SOU quem escolheu: recebo o valor do adversário
-  state.oppChoice = { attribute: payload.attribute, value: payload.value, cardId: payload.cardId };
-  resolveRound();
-}
-
-function resolveRound(){
-  if(!state.myChoice || !state.oppChoice) return;
-
-  const attr = state.myChoice.attribute;
-  const myVal = state.myChoice.value;
-  const oppVal = state.oppChoice.value;
-
-  const myCard = state.myPile.shift();
-  const oppCard = cardById(state.oppChoice.cardId);
-
-  let outcome; // 'win' | 'lose' | 'tie'
-  if(myVal > oppVal) outcome = 'win';
-  else if(myVal < oppVal) outcome = 'lose';
-  else outcome = 'tie';
-
-  showRoundResult(myCard, attr, myVal, oppVal, outcome, oppCard);
-
-  if(outcome === 'tie'){
-    // as duas cartas ficam "presas" na mesa até alguém vencer uma rodada seguinte.
-    // guardamos as DUAS cartas reais (a minha e a cópia da do adversário, via lookup
-    // no baralho compartilhado) para que, quando o pote for reclamado, nenhuma carta suma.
-    state.pot.push(myCard, oppCard);
-    state.oppCount -= 1; // só a carta dele desta rodada sai do monte ativo dele
-  } else if(outcome === 'win'){
-    // eu ganho: minha carta + carta do adversário desta rodada + pote inteiro (já com as
-    // cartas de ambos os lados de empates anteriores) vão pro fim do meu monte
-    state.myPile.push(myCard, oppCard);
-    state.pot.forEach(c => state.myPile.push(c));
-    state.pot = [];
-    state.oppCount -= 1; // só a carta dele desta rodada; o pote dele já foi descontado nos empates
-    state.turn = myRole();
-  } else {
-    // eu perco: minha carta desta rodada + o pote inteiro vão pro monte do adversário.
-    // a carta dele desta rodada volta pro monte dele (sem alterar a contagem).
-    state.oppCount += 1 + state.pot.length;
-    state.pot = [];
-    state.turn = oppRole();
+  if(myCard){
+    const myValue = myCard.attrs[payload.attribute];
+    state.roundReveals[state.myId] = { cardId: myCard.id, value: myValue };
+    state.channel.send({
+      type: 'broadcast',
+      event: 'reveal',
+      payload: { playerId: state.myId, attribute: payload.attribute, cardId: myCard.id, value: myValue }
+    });
   }
 
-  state.myChoice = null;
-  state.oppChoice = null;
+  renderGame();
+  maybeResolveRound();
 }
 
-function showRoundResult(myCard, attr, myVal, oppVal, outcome, oppCard){
-  playResultSound(outcome);
+function onRoundReveal(payload){
+  state.roundReveals[payload.playerId] = { cardId: payload.cardId, value: payload.value };
+  maybeResolveRound();
+}
+
+function maybeResolveRound(){
+  const active = activePlayers();
+  if(active.length === 0) return;
+  const allIn = active.every(p => state.roundReveals[p.id] !== undefined);
+  if(allIn) resolveRoundMulti();
+}
+
+function resolveRoundMulti(){
+  const attr = state.roundAttribute;
+  const reveals = state.roundReveals;
+  const active = activePlayers();
+
+  let maxVal = -Infinity;
+  active.forEach(p => { if(reveals[p.id].value > maxVal) maxVal = reveals[p.id].value; });
+  const winners = active.filter(p => reveals[p.id].value === maxVal);
+
+  showRoundResultMulti(attr, reveals, active, winners);
+
+  const playedCardIdOf = {};
+  active.forEach(p => { playedCardIdOf[p.id] = reveals[p.id].cardId; });
+
+  // cada jogador ativo perde a carta que jogou nesta rodada
+  if(reveals[state.myId]) state.myPile.shift();
+  active.forEach(p => {
+    if(p.id !== state.myId){
+      state.pileCounts[p.id] = Math.max(0, (state.pileCounts[p.id] || 0) - 1);
+    }
+  });
+
+  if(winners.length === 1){
+    // vitória única: o vencedor leva as cartas jogadas por todos + o pote acumulado
+    const winnerId = winners[0].id;
+    const wonCardIds = active.map(p => playedCardIdOf[p.id]).concat(state.pot.map(c => c.id));
+    if(winnerId === state.myId){
+      wonCardIds.forEach(id => state.myPile.push(cardById(id)));
+    } else {
+      state.pileCounts[winnerId] = (state.pileCounts[winnerId] || 0) + wonCardIds.length;
+    }
+    state.pot = [];
+    state.turnPlayerId = winnerId;
+  } else {
+    // empate entre 2+ jogadores: todas as cartas jogadas vão pro pote, e quem
+    // chamou a rodada chama de novo (turnPlayerId não muda).
+    active.forEach(p => state.pot.push(cardById(playedCardIdOf[p.id])));
+  }
+
+  state.roundAttribute = null;
+  state.roundReveals = {};
+}
+
+function showRoundResultMulti(attr, reveals, active, winners){
+  let mySoundOutcome = 'tie';
+  if(winners.length === 1) mySoundOutcome = winners[0].id === state.myId ? 'win' : 'lose';
+  playResultSound(mySoundOutcome);
+
   const panel = document.getElementById('resultPanel');
   panel.classList.remove('hidden');
   const meta = ATTR_LABELS[attr];
+
   let text;
-  if(outcome === 'win') text = 'Você venceu a rodada! 🎉';
-  else if(outcome === 'lose') text = state.oppName + ' venceu a rodada.';
-  else text = 'Empate — cartas ficam na mesa.';
+  if(winners.length === 1){
+    text = winners[0].id === state.myId
+      ? 'Você venceu a rodada! 🎉'
+      : (playerName(winners[0].id) + ' venceu a rodada.');
+  } else {
+    text = 'Empate entre ' + joinWithAnd(winners.map(w => playerName(w.id))) + ' — cartas ficam na mesa.';
+  }
   document.getElementById('resultBig').textContent = text;
   document.getElementById('resultDetail').textContent = meta.label;
 
-  document.getElementById('resultMyImg').src = myCard.image.url;
-  document.getElementById('resultMyImg').alt = myCard.name;
-  document.getElementById('resultMyValue').textContent = formatAttrValue(attr, myVal);
+  const list = document.getElementById('resultList');
+  list.innerHTML = '';
+  active.forEach(p => {
+    const entry = reveals[p.id];
+    const card = cardById(entry.cardId);
+    const isWinner = winners.some(w => w.id === p.id);
 
-  document.getElementById('resultOppImg').src = oppCard.image.url;
-  document.getElementById('resultOppImg').alt = oppCard.name;
-  document.getElementById('resultOppLabel').textContent = oppCard.name;
-  document.getElementById('resultOppValue').textContent = formatAttrValue(attr, oppVal);
+    const div = document.createElement('div');
+    div.className = 'result-entry' + (isWinner ? ' winner' : '');
 
-  document.getElementById('resultMyImg').closest('.result-side').classList.toggle('winner', outcome === 'win');
-  document.querySelector('#resultOppImg').closest('.result-side').classList.toggle('winner', outcome === 'lose');
+    const img = document.createElement('img');
+    img.className = 'result-thumb';
+    img.src = card.image.url;
+    img.alt = card.name;
+
+    const label = document.createElement('div');
+    label.className = 'result-side-label';
+    label.textContent = p.id === state.myId ? 'Você' : p.name;
+
+    const value = document.createElement('div');
+    value.className = 'result-side-value';
+    value.textContent = formatAttrValue(attr, entry.value);
+
+    div.appendChild(img);
+    div.appendChild(label);
+    div.appendChild(value);
+    list.appendChild(div);
+  });
 
   const nextBtn = document.getElementById('btnNextRound');
   nextBtn.onclick = () => {
@@ -1938,23 +2111,24 @@ function showRoundResult(myCard, attr, myVal, oppVal, outcome, oppCard){
 }
 
 function checkGameOver(){
-  if(state.myPile.length === 0){
-    endGame(false);
-  } else if(state.oppCount <= 0){
-    endGame(true);
+  const active = activePlayers();
+  if(active.length <= 1){
+    const winnerId = active.length === 1 ? active[0].id : state.turnPlayerId;
+    endGame(winnerId);
   } else {
     renderGame();
     playDealSound();
   }
 }
 
-function endGame(iWon){
+function endGame(winnerId){
   showScreen('end');
+  const iWon = winnerId === state.myId;
   document.getElementById('endEmoji').textContent = iWon ? '🏆' : '🐾';
-  document.getElementById('endTitle').textContent = iWon ? 'Você venceu!' : (state.oppName + ' venceu!');
+  document.getElementById('endTitle').textContent = iWon ? 'Você venceu!' : (playerName(winnerId) + ' venceu!');
   document.getElementById('endSubtitle').textContent = iWon
     ? 'Você ficou com todas as cartas do baralho.'
-    : (state.oppName + ' ficou com todas as cartas do baralho. Bora revanche?');
+    : (playerName(winnerId) + ' ficou com todas as cartas do baralho. Bora revanche?');
 }
 
 document.getElementById('btnReplay').addEventListener('click', () => {
