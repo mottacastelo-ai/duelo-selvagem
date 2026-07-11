@@ -1626,7 +1626,12 @@ function loadSession(){
 document.getElementById('btnCreate').addEventListener('click', () => {
   unlockAudio();
   const name = document.getElementById('playerName').value.trim();
-  state.myName = name || 'Jogador 1';
+  if(!name){
+    toast('Digite seu nome antes de criar a sala.');
+    document.getElementById('playerName').focus();
+    return;
+  }
+  state.myName = name;
   saveName(state.myName);
   state.myId = generateId();
   state.isHost = true;
@@ -1656,11 +1661,16 @@ document.getElementById('btnJoin').addEventListener('click', () => {
   unlockAudio();
   const name = document.getElementById('playerName').value.trim();
   const code = document.getElementById('joinCode').value.trim().toUpperCase();
+  if(!name){
+    toast('Digite seu nome antes de entrar na sala.');
+    document.getElementById('playerName').focus();
+    return;
+  }
   if(code.length !== 4){
     toast('Digite o código de 4 caracteres da sala.');
     return;
   }
-  state.myName = name || 'Jogador';
+  state.myName = name;
   saveName(state.myName);
   state.myId = generateId();
   state.isHost = false;
