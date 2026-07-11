@@ -444,9 +444,12 @@
   <!-- SCREEN: CONNECTING (guest) -->
   <div class="screen hidden" id="screen-connecting">
     <h1 class="title">Sala <span id="connectingRoomCode"></span></h1>
-    <div class="spinner"></div>
+    <div class="spinner" id="connectingSpinner"></div>
     <div class="status-line" id="connectingStatus">Entrando na sala</div>
     <div class="player-list hidden" id="connectingPlayerList"></div>
+    <div class="btn-row hidden" id="reconnectFailedActions">
+      <button class="btn btn-ghost" id="btnGiveUpReconnect">Voltar ao início</button>
+    </div>
     <div class="debug-line" id="debugConnecting"></div>
   </div>
 
@@ -1430,14 +1433,15 @@ const state = {
   myName: 'Você',
   players: [],          // [{id, name}] — players[0] é sempre o host (quem criou a sala)
   started: false,
-  myPile: [],
-  pileCounts: {},        // {playerId: quantidade} — para os OUTROS jogadores (a minha própria é myPile.length)
+  myPile: [],            // cartas (objetos) do meu monte, na ordem — espelho de playerPiles[myId]
+  playerPiles: {},        // {playerId: [cardId, ...]} — TODO cliente espelha o monte de TODOS os jogadores
+                           // (não só o próprio); isso é o que permite reconectar no meio do jogo.
   pot: [],
   turnPlayerId: null,
   roundAttribute: null,
   roundReveals: {},      // {playerId: {cardId, value}} — revelações da rodada atual
   resolving: false,
-  joinAckd: false,       // guest: já recebi confirmação de que estou na sala? (permite parar de reenviar 'join')
+  joinAckd: false,       // já recebi confirmação de que estou na sala (roster) ou o estado completo (stateSync)?
   joinRetryTimer: null
 };
 
@@ -1446,7 +1450,7 @@ function generateId(){
 }
 
 function pileCountOf(id){
-  return id === state.myId ? state.myPile.length : (state.pileCounts[id] || 0);
+  return (state.playerPiles[id] || []).length;
 }
 
 function activePlayers(){
@@ -1580,16 +1584,55 @@ function randomCode(){
 }
 
 /* ==========================================================================
+   NOME LEMBRADO (localStorage) — evita ter que redigitar toda vez
+   ========================================================================== */
+const NAME_KEY = 'duelo_selvagem_nome';
+const SESSION_KEY = 'duelo_selvagem_sessao';
+
+function loadSavedName(){
+  try { return localStorage.getItem(NAME_KEY) || ''; } catch(e){ return ''; }
+}
+function saveName(name){
+  try { localStorage.setItem(NAME_KEY, name); } catch(e){ /* localStorage indisponível: ignora */ }
+}
+
+/* ==========================================================================
+   SESSÃO SALVA (localStorage) — permite reconectar sozinho se a página
+   recarregar sem querer, em vez de perder a sala pra sempre.
+   ========================================================================== */
+function saveSession(){
+  try {
+    localStorage.setItem(SESSION_KEY, JSON.stringify({
+      roomCode: state.roomCode, myId: state.myId, myName: state.myName
+    }));
+  } catch(e){ /* ignora */ }
+}
+function clearSession(){
+  try { localStorage.removeItem(SESSION_KEY); } catch(e){ /* ignora */ }
+}
+function loadSession(){
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    if(!raw) return null;
+    const s = JSON.parse(raw);
+    if(!s || !s.roomCode || !s.myId) return null;
+    return s;
+  } catch(e){ return null; }
+}
+
+/* ==========================================================================
    CRIAR SALA (HOST)
    ========================================================================== */
 document.getElementById('btnCreate').addEventListener('click', () => {
   unlockAudio();
   const name = document.getElementById('playerName').value.trim();
   state.myName = name || 'Jogador 1';
+  saveName(state.myName);
   state.myId = generateId();
   state.isHost = true;
   state.roomCode = randomCode();
   state.players = [{ id: state.myId, name: state.myName }];
+  saveSession();
 
   document.getElementById('roomCodeDisplay').textContent = state.roomCode;
   showScreen('waiting');
@@ -1618,9 +1661,11 @@ document.getElementById('btnJoin').addEventListener('click', () => {
     return;
   }
   state.myName = name || 'Jogador';
+  saveName(state.myName);
   state.myId = generateId();
   state.isHost = false;
   state.roomCode = code;
+  saveSession();
 
   document.getElementById('connectingRoomCode').textContent = code;
   showScreen('connecting');
@@ -1653,6 +1698,62 @@ function sendJoinWithRetry(){
   attempt();
   state.joinRetryTimer = setInterval(attempt, 1500);
 }
+
+/* ==========================================================================
+   RECONEXÃO AUTOMÁTICA (página recarregou sem querer, ou foi fechada e
+   reaberta) — se existe uma sessão salva, tentamos voltar pra sala sozinhos
+   em vez de simplesmente perder tudo.
+   ========================================================================== */
+function sendRejoinWithRetry(){
+  state.joinAckd = false;
+  let attempts = 0;
+  const attempt = () => {
+    if(state.joinAckd) return;
+    attempts++;
+    debugState.joinAttempts++;
+    renderDebug();
+    console.log('[Duelo Selvagem] tentando reconectar à sala', state.roomCode, '(tentativa ' + attempts + ')');
+    state.channel.send({
+      type: 'broadcast',
+      event: 'rejoin',
+      payload: { id: state.myId, name: state.myName }
+    });
+    if(attempts >= 6){
+      clearInterval(state.joinRetryTimer);
+      state.joinRetryTimer = null;
+      document.getElementById('connectingSpinner').classList.add('hidden');
+      document.getElementById('connectingStatus').textContent =
+        'Não foi possível reconectar à sala. Ela pode ter sido encerrada ou não há mais ninguém conectado nela.';
+      document.getElementById('reconnectFailedActions').classList.remove('hidden');
+    }
+  };
+  attempt();
+  state.joinRetryTimer = setInterval(attempt, 1500);
+}
+
+function tryAutoReconnect(){
+  const session = loadSession();
+  if(!session) return false;
+
+  state.myId = session.myId;
+  state.myName = session.myName || 'Jogador';
+  state.roomCode = session.roomCode;
+
+  document.getElementById('connectingRoomCode').textContent = state.roomCode;
+  document.getElementById('connectingStatus').textContent = 'Reconectando à sala ' + state.roomCode + '…';
+  showScreen('connecting');
+  renderDebug();
+
+  connectChannel(state.roomCode, () => {
+    sendRejoinWithRetry();
+  });
+  return true;
+}
+
+document.getElementById('btnGiveUpReconnect').addEventListener('click', () => {
+  clearSession();
+  location.reload();
+});
 
 /* ==========================================================================
    CANAL REALTIME
@@ -1692,12 +1793,21 @@ function connectChannel(code, onReady){
   channel.on('broadcast', { event: 'roster' }, ({ payload }) => {
     console.log('[Duelo Selvagem] roster recebido:', payload.players);
     state.players = payload.players;
+    state.isHost = state.players.length > 0 && state.players[0].id === state.myId;
     const amIIn = state.players.some(p => p.id === state.myId);
     if(amIIn && state.joinRetryTimer){
       clearInterval(state.joinRetryTimer);
       state.joinRetryTimer = null;
       state.joinAckd = true;
-      document.getElementById('connectingStatus').textContent = 'Na sala! Aguardando o host começar…';
+      saveSession();
+      if(state.isHost){
+        document.getElementById('roomCodeDisplay').textContent = state.roomCode;
+        showScreen('waiting');
+      } else {
+        document.getElementById('connectingRoomCode').textContent = state.roomCode;
+        showScreen('connecting');
+        document.getElementById('connectingStatus').textContent = 'Na sala! Aguardando o host começar…';
+      }
     }
     renderWaitingList();
   });
@@ -1732,6 +1842,77 @@ function connectChannel(code, onReady){
 
   channel.on('broadcast', { event: 'rematch' }, () => {
     toast('Alguém quer jogar de novo. Recarregue a página para uma nova sala.');
+  });
+
+  // ---- Reconexão: alguém (talvez eu mesmo, numa aba antiga) recarregou a
+  // página e está tentando voltar pra sala. Qualquer cliente que já conheça
+  // esse jogador ajuda a reintegrá-lo, sem depender só do host estar ativo.
+  channel.on('broadcast', { event: 'rejoin' }, ({ payload }) => {
+    console.log('[Duelo Selvagem] evento rejoin recebido:', payload);
+    const known = state.players.some(p => p.id === payload.id);
+
+    if(!state.started){
+      if(state.isHost){
+        if(!known && state.players.length < MAX_PLAYERS){
+          state.players.push({ id: payload.id, name: payload.name });
+        }
+        broadcastRoster();
+        renderWaitingList();
+      } else if(known && state.players.length > 0){
+        // o host pode estar offline recarregando também; quem já tem o
+        // roster ajuda reenviando, evitando travar o jogador que sumiu.
+        broadcastRoster();
+      }
+      return;
+    }
+
+    if(known){
+      state.channel.send({
+        type: 'broadcast',
+        event: 'stateSync',
+        payload: {
+          toId: payload.id,
+          players: state.players,
+          playerPiles: state.playerPiles,
+          turnPlayerId: state.turnPlayerId,
+          pot: state.pot.map(c => c.id),
+          roundAttribute: state.roundAttribute
+        }
+      });
+    }
+  });
+
+  channel.on('broadcast', { event: 'stateSync' }, ({ payload }) => {
+    if(payload.toId !== state.myId) return; // não é pra mim
+    console.log('[Duelo Selvagem] estado completo recebido, restaurando sessão em andamento');
+    if(state.joinRetryTimer){ clearInterval(state.joinRetryTimer); state.joinRetryTimer = null; }
+    state.joinAckd = true;
+    state.started = true;
+    state.players = payload.players;
+    state.isHost = state.players.length > 0 && state.players[0].id === state.myId;
+    state.playerPiles = payload.playerPiles;
+    state.myPile = (state.playerPiles[state.myId] || []).map(cardById);
+    state.turnPlayerId = payload.turnPlayerId;
+    state.pot = payload.pot.map(id => cardById(id));
+    state.roundAttribute = payload.roundAttribute || null;
+    state.roundReveals = {};
+    state.resolving = !!state.roundAttribute;
+    saveSession();
+    startGameScreen();
+
+    // se caiu bem no meio de uma rodada (alguém já tinha chamado um atributo),
+    // minha revelação daquela rodada nunca foi enviada — mando agora.
+    if(state.roundAttribute && state.myPile[0]){
+      const myCard = state.myPile[0];
+      const myValue = myCard.attrs[state.roundAttribute];
+      state.roundReveals[state.myId] = { cardId: myCard.id, value: myValue };
+      state.channel.send({
+        type: 'broadcast',
+        event: 'reveal',
+        payload: { playerId: state.myId, attribute: state.roundAttribute, cardId: myCard.id, value: myValue }
+      });
+      maybeResolveRound();
+    }
   });
 
   channel.subscribe((status, err) => {
@@ -1825,13 +2006,11 @@ function startGameAsHost(){
 function applyStart(payload){
   state.started = true;
   state.players = payload.players;
-  state.myPile = (payload.piles[state.myId] || []).map(id => cardById(id));
-  state.pileCounts = {};
-  state.players.forEach(p => {
-    if(p.id !== state.myId) state.pileCounts[p.id] = (payload.piles[p.id] || []).length;
-  });
+  state.playerPiles = payload.piles;
+  state.myPile = (state.playerPiles[state.myId] || []).map(id => cardById(id));
   state.turnPlayerId = payload.turnPlayerId;
   state.pot = [];
+  saveSession();
   startGameScreen();
 }
 
@@ -1926,11 +2105,16 @@ function renderCardFace(card){
 /* ==========================================================================
    SOM E VERSO DA CARTA (inspirado no app "Trump Cards")
    ========================================================================== */
+const CARD_SOUND_MAX_SECONDS = 5;
+
 function playCardSound(card){
   if(!card.sound) return;
   const audio = document.getElementById('sfxAudio');
+  clearTimeout(audio._stopTimer);
   audio.src = card.sound.url;
+  audio.currentTime = 0;
   audio.play().catch(() => {});
+  audio._stopTimer = setTimeout(() => { audio.pause(); }, CARD_SOUND_MAX_SECONDS * 1000);
 }
 
 function openInfoModal(card){
@@ -1975,7 +2159,9 @@ function openInfoModal(card){
 
 function closeInfoModal(){
   document.getElementById('infoModal').classList.add('hidden');
-  document.getElementById('sfxAudio').pause();
+  const audio = document.getElementById('sfxAudio');
+  clearTimeout(audio._stopTimer);
+  audio.pause();
 }
 
 document.getElementById('btnCloseInfo').addEventListener('click', closeInfoModal);
@@ -2059,23 +2245,20 @@ function resolveRoundMulti(){
   const playedCardIdOf = {};
   active.forEach(p => { playedCardIdOf[p.id] = reveals[p.id].cardId; });
 
-  // cada jogador ativo perde a carta que jogou nesta rodada
-  if(reveals[state.myId]) state.myPile.shift();
+  // cada jogador ativo perde a carta (topo do monte) que jogou nesta rodada.
+  // TODO cliente espelha o monte de TODOS — é isso que permite reconstruir
+  // o estado de qualquer um que reconecte no meio do jogo.
   active.forEach(p => {
-    if(p.id !== state.myId){
-      state.pileCounts[p.id] = Math.max(0, (state.pileCounts[p.id] || 0) - 1);
-    }
+    const pile = state.playerPiles[p.id];
+    if(pile && pile.length) pile.shift();
   });
 
   if(winners.length === 1){
     // vitória única: o vencedor leva as cartas jogadas por todos + o pote acumulado
     const winnerId = winners[0].id;
     const wonCardIds = active.map(p => playedCardIdOf[p.id]).concat(state.pot.map(c => c.id));
-    if(winnerId === state.myId){
-      wonCardIds.forEach(id => state.myPile.push(cardById(id)));
-    } else {
-      state.pileCounts[winnerId] = (state.pileCounts[winnerId] || 0) + wonCardIds.length;
-    }
+    const winnerPile = state.playerPiles[winnerId] || (state.playerPiles[winnerId] = []);
+    wonCardIds.forEach(id => winnerPile.push(id));
     state.pot = [];
     state.turnPlayerId = winnerId;
   } else {
@@ -2084,8 +2267,10 @@ function resolveRoundMulti(){
     active.forEach(p => state.pot.push(cardById(playedCardIdOf[p.id])));
   }
 
+  state.myPile = (state.playerPiles[state.myId] || []).map(cardById);
   state.roundAttribute = null;
   state.roundReveals = {};
+  saveSession();
 }
 
 function showRoundResultMulti(attr, reveals, active, winners){
@@ -2156,6 +2341,7 @@ function checkGameOver(){
 }
 
 function endGame(winnerId){
+  clearSession(); // a partida acabou: não faz sentido tentar reconectar a ela depois
   showScreen('end');
   const iWon = winnerId === state.myId;
   document.getElementById('endEmoji').textContent = iWon ? '🏆' : '🐾';
@@ -2169,8 +2355,17 @@ document.getElementById('btnReplay').addEventListener('click', () => {
   if(state.channel){
     state.channel.send({ type: 'broadcast', event: 'rematch', payload: {} });
   }
+  clearSession();
   location.reload();
 });
+
+/* ==========================================================================
+   INICIALIZAÇÃO DA PÁGINA
+   ========================================================================== */
+document.getElementById('playerName').value = loadSavedName();
+if(!tryAutoReconnect()){
+  // sem sessão salva: fluxo normal, tela inicial já é a padrão
+}
 </script>
 </body>
 </html>
