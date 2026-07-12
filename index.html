@@ -148,6 +148,29 @@
     content:''; flex:1; height:1px; background: var(--surface-2);
   }
 
+  /* --- SELETOR DE TEMA --- */
+  .theme-picker{ display:flex; gap:8px; }
+  .theme-option{
+    flex:1;
+    background: var(--surface);
+    border: 1px solid var(--surface-2);
+    border-radius: 10px;
+    padding: 12px 8px;
+    color: var(--paper-ink);
+    font-family:'Work Sans', sans-serif;
+    font-size:13px;
+    font-weight:600;
+    text-align:center;
+    cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+  }
+  .theme-option .theme-emoji{ font-size:20px; }
+  .theme-option.selected{
+    border-color: var(--accent);
+    background: var(--surface-2);
+    color: var(--accent);
+  }
+
   /* --- WAITING / ROOM CODE --- */
   .code-display{
     background: var(--surface);
@@ -403,7 +426,7 @@
   <!-- SCREEN: HOME -->
   <div class="screen" id="screen-home">
     <h1 class="title">Quem vence<br><em>o duelo?</em></h1>
-    <p class="lede">Um duelo de cartas de animais para dois jogadores, cada um no seu celular. Crie uma sala ou entre com o código de quem já criou.</p>
+    <p class="lede">Um duelo de cartas para até 4 jogadores, cada um no seu celular. Escolha o tema, crie uma sala ou entre com o código de quem já criou.</p>
 
     <div class="hidden" id="resumeBanner" style="background:var(--surface-2); border:1px solid var(--accent-dark); border-radius:12px; padding:14px; margin-bottom:16px;">
       <p style="margin:0 0 10px; font-size:14px;">Você estava na sala <strong id="resumeRoomCode">----</strong> como <strong id="resumeName">-</strong>.</p>
@@ -416,6 +439,11 @@
     <div class="field">
       <label for="playerName">Seu nome</label>
       <input type="text" id="playerName" maxlength="16" placeholder="Ex: Léo">
+    </div>
+
+    <div class="field">
+      <label>Tema (só importa se você for criar a sala)</label>
+      <div class="theme-picker" id="themePicker"></div>
     </div>
 
     <div class="btn-row">
@@ -558,7 +586,18 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
    sound.author). Atributos: maior valor sempre vence.
    TODO: expandir para 32 animais em lotes verificados.
    ========================================================================== */
-const DECK = [
+const THEMES = {
+  selvagem: {
+    id: 'selvagem', label: 'Selvagem', emoji: '🐆', title: 'Duelo Selvagem',
+    attrLabels: {
+  peso_kg: { label: 'Peso', unit: 'kg' },
+  velocidade_kmh: { label: 'Velocidade Máx.', unit: 'km/h' },
+  expectativa_anos: { label: 'Expectativa de vida', unit: 'anos' },
+  altura_cm: { label: 'Altura', unit: 'cm' },
+  populacao_estimada: { label: 'População estimada', unit: '' }
+},
+    attrOrder: ['peso_kg', 'velocidade_kmh', 'expectativa_anos', 'altura_cm', 'populacao_estimada'],
+    deck: [
   {
     id: 'guepardo', name: 'Guepardo', species: 'Acinonyx jubatus', emoji: '🐆',
     attrs: { peso_kg: 50, velocidade_kmh: 104, expectativa_anos: 12, altura_cm: 77, populacao_estimada: 7100 },
@@ -1402,25 +1441,1278 @@ const DECK = [
       fontes: 'Wikipédia (nota: velocidade terrestre vem de fontes secundárias convergentes, sem confirmação em fonte primária — orangotangos são notoriamente lentos e desajeitados no chão)'
     }
   }
-];
-
-const ATTR_LABELS = {
-  peso_kg: { label: 'Peso', unit: 'kg' },
-  velocidade_kmh: { label: 'Velocidade Máx.', unit: 'km/h' },
-  expectativa_anos: { label: 'Expectativa de vida', unit: 'anos' },
-  altura_cm: { label: 'Altura', unit: 'cm' },
-  populacao_estimada: { label: 'População estimada', unit: '' }
+]
+  },
+  aereo: {
+    id: 'aereo', label: 'Aéreo', emoji: '✈️', title: 'Duelo Aéreo',
+    attrLabels: {
+      velocidade_kmh: { label: 'Velocidade Máx.', unit: 'km/h' },
+      envergadura_m: { label: 'Envergadura', unit: 'm' },
+      peso_kg: { label: 'Peso Máx. de Decolagem', unit: 'kg' },
+      altitude_m: { label: 'Altitude Máxima', unit: 'm' },
+      assentos: { label: 'Assentos', unit: '' }
+    },
+    attrOrder: ['velocidade_kmh', 'envergadura_m', 'peso_kg', 'altitude_m', 'assentos'],
+    deck: [
+  {
+    id: 'wright_flyer', name: 'Wright Flyer', species: '1903', emoji: '✈️',
+    attrs: { velocidade_kmh: 48, envergadura_m: 12.29, peso_kg: 338, altitude_m: 3, assentos: 1 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/wright-flyer.jpg', author: 'John T. Daniels, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1903.',
+      alimentacao: 'Envergadura: 12.29 m · Peso máx. de decolagem: 338 kg.',
+      comportamento: 'Velocidade máxima: 48 km/h · Altitude máxima: 3 m.',
+      conservacao: 'Assentos/tripulação: 1.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'airbus_a319neo', name: 'Airbus A319neo', species: '2019', emoji: '✈️',
+    attrs: { velocidade_kmh: 876, envergadura_m: 35.8, peso_kg: 75500, altitude_m: 12100, assentos: 160 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Airbus_A319neo.jpg', author: 'Pedro Aragão, CC BY-SA 3.0 GFDL, via Wikimedia Commons', license: 'CC BY SA 3.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2019.',
+      alimentacao: 'Envergadura: 35.8 m · Peso máx. de decolagem: 75500 kg.',
+      comportamento: 'Velocidade máxima: 876 km/h · Altitude máxima: 12100 m.',
+      conservacao: 'Assentos/tripulação: 160.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'airbus_a320neo', name: 'Airbus A320neo', species: '2016', emoji: '✈️',
+    attrs: { velocidade_kmh: 876, envergadura_m: 35.8, peso_kg: 79000, altitude_m: 12100, assentos: 195 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Airbus_A320neo.jpg', author: 'AndrewDawes, CC BY-SA 4.0', license: 'CC BY SA 4.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2016.',
+      alimentacao: 'Envergadura: 35.8 m · Peso máx. de decolagem: 79000 kg.',
+      comportamento: 'Velocidade máxima: 876 km/h · Altitude máxima: 12100 m.',
+      conservacao: 'Assentos/tripulação: 195.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'airbus_a321neo', name: 'Airbus A321neo', species: '2017', emoji: '✈️',
+    attrs: { velocidade_kmh: 876, envergadura_m: 35.8, peso_kg: 97000, altitude_m: 12100, assentos: 244 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Airbus_A321neo.jpg', author: 'Olivier CABARET, CC BY 2.0, via Wikimedia Commons', license: 'CC BY 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2017.',
+      alimentacao: 'Envergadura: 35.8 m · Peso máx. de decolagem: 97000 kg.',
+      comportamento: 'Velocidade máxima: 876 km/h · Altitude máxima: 12100 m.',
+      conservacao: 'Assentos/tripulação: 244.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'airbus_a300_b1', name: 'Airbus A300 B1', species: '1972', emoji: '✈️',
+    attrs: { velocidade_kmh: 828, envergadura_m: 44.83, peso_kg: 137000, altitude_m: 12190, assentos: 323 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Airbus_A300B1.jpg', author: 'Pedro Aragão, CC BY-SA 3.0 GFDL, via Wikimedia Commons', license: 'CC BY SA 3.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1972.',
+      alimentacao: 'Envergadura: 44.83 m · Peso máx. de decolagem: 137000 kg.',
+      comportamento: 'Velocidade máxima: 828 km/h · Altitude máxima: 12190 m.',
+      conservacao: 'Assentos/tripulação: 323.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'airbus_a310_200', name: 'Airbus A310-200', species: '1982', emoji: '✈️',
+    attrs: { velocidade_kmh: 897, envergadura_m: 43.9, peso_kg: 132000, altitude_m: 12530, assentos: 240 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Airbus_A310-200.jpg', author: 'Laurent ERRERA from LUnion, France, CC BY-SA 2.0, via Wikimedia Commons', license: 'CC BY SA 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1982.',
+      alimentacao: 'Envergadura: 43.9 m · Peso máx. de decolagem: 132000 kg.',
+      comportamento: 'Velocidade máxima: 897 km/h · Altitude máxima: 12530 m.',
+      conservacao: 'Assentos/tripulação: 240.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'airbus_a340_600', name: 'Airbus A340-600', species: '2001', emoji: '✈️',
+    attrs: { velocidade_kmh: 890, envergadura_m: 63.45, peso_kg: 365000, altitude_m: 12630, assentos: 380 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Airbus_A340-600.jpg', author: 'Myself (Adrian Pingstone)., Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2001.',
+      alimentacao: 'Envergadura: 63.45 m · Peso máx. de decolagem: 365000 kg.',
+      comportamento: 'Velocidade máxima: 890 km/h · Altitude máxima: 12630 m.',
+      conservacao: 'Assentos/tripulação: 380.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'airbus_a318', name: 'Airbus A318', species: '2002', emoji: '✈️',
+    attrs: { velocidade_kmh: 871, envergadura_m: 34.1, peso_kg: 59000, altitude_m: 12130, assentos: 132 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Airbus_A318.jpg', author: 'Arpingstone, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2002.',
+      alimentacao: 'Envergadura: 34.1 m · Peso máx. de decolagem: 59000 kg.',
+      comportamento: 'Velocidade máxima: 871 km/h · Altitude máxima: 12130 m.',
+      conservacao: 'Assentos/tripulação: 132.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'airbus_a380', name: 'Airbus A380', species: '2005', emoji: '✈️',
+    attrs: { velocidade_kmh: 961, envergadura_m: 79.75, peso_kg: 560000, altitude_m: 13110, assentos: 853 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Airbus_A380.jpg', author: 'Bernard Spragg. NZ from Christchurch, New Zealand, CC0, via Wikimedia Commons', license: 'CC0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2005.',
+      alimentacao: 'Envergadura: 79.75 m · Peso máx. de decolagem: 560000 kg.',
+      comportamento: 'Velocidade máxima: 961 km/h · Altitude máxima: 13110 m.',
+      conservacao: 'Assentos/tripulação: 853.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'airbus_a330_900', name: 'Airbus A330-900', species: '2017', emoji: '✈️',
+    attrs: { velocidade_kmh: 913, envergadura_m: 64, peso_kg: 242000, altitude_m: 12630, assentos: 440 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Airbus_A330-900.jpg', author: 'Steve Lynes from Sandshurst, United Kingdom, CC BY 2.0, via Wikimedia Commons', license: 'CC BY 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2017.',
+      alimentacao: 'Envergadura: 64 m · Peso máx. de decolagem: 242000 kg.',
+      comportamento: 'Velocidade máxima: 913 km/h · Altitude máxima: 12630 m.',
+      conservacao: 'Assentos/tripulação: 440.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'airbus_a350_1000', name: 'Airbus A350-1000', species: '2016', emoji: '✈️',
+    attrs: { velocidade_kmh: 945, envergadura_m: 64.75, peso_kg: 308000, altitude_m: 12630, assentos: 440 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Airbus_A350-1000.jpg', author: 'Dylan Agbagni (CC0) from Bordeaux, France, CC0, via Wikimedia Commons', license: 'CC0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2016.',
+      alimentacao: 'Envergadura: 64.75 m · Peso máx. de decolagem: 308000 kg.',
+      comportamento: 'Velocidade máxima: 945 km/h · Altitude máxima: 12630 m.',
+      conservacao: 'Assentos/tripulação: 440.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'airbus_a300_600st_beluga', name: 'Airbus A300-600ST Beluga', species: '1994', emoji: '✈️',
+    attrs: { velocidade_kmh: 750, envergadura_m: 44.84, peso_kg: 155000, altitude_m: 10668, assentos: 2 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Airbus_Beluga.jpg', author: 'Patrick Ludolph from Hamburg, Deutschland, CC BY 2.0, via Wikimedia Commons', license: 'CC BY 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1994.',
+      alimentacao: 'Envergadura: 44.84 m · Peso máx. de decolagem: 155000 kg.',
+      comportamento: 'Velocidade máxima: 750 km/h · Altitude máxima: 10668 m.',
+      conservacao: 'Assentos/tripulação: 2.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'airbus_a400m_atlas', name: 'Airbus A400M Atlas', species: '2009', emoji: '✈️',
+    attrs: { velocidade_kmh: 781, envergadura_m: 42.4, peso_kg: 137500, altitude_m: 11300, assentos: 160 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Airbus_A400M.jpg', author: 'Myself (Adrian Pingstone)., Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2009.',
+      alimentacao: 'Envergadura: 42.4 m · Peso máx. de decolagem: 137500 kg.',
+      comportamento: 'Velocidade máxima: 781 km/h · Altitude máxima: 11300 m.',
+      conservacao: 'Assentos/tripulação: 160.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'eurofighter_typhoon', name: 'Eurofighter Typhoon', species: '1994', emoji: '✈️',
+    attrs: { velocidade_kmh: 2495, envergadura_m: 10.95, peso_kg: 23400, altitude_m: 16000, assentos: 1 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Eurofighter_Typhoon.jpg', author: 'Dmitry A. Mottl, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1994.',
+      alimentacao: 'Envergadura: 10.95 m · Peso máx. de decolagem: 23400 kg.',
+      comportamento: 'Velocidade máxima: 2495 km/h · Altitude máxima: 16000 m.',
+      conservacao: 'Assentos/tripulação: 1.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'aerospatiale_bac_concorde', name: 'Aérospatiale-BAC Concorde', species: '1969', emoji: '✈️',
+    attrs: { velocidade_kmh: 2170, envergadura_m: 25.6, peso_kg: 185070, altitude_m: 18300, assentos: 128 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Aerospatiale-BAC_Concorde.jpg', author: 'SDASM, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1969.',
+      alimentacao: 'Envergadura: 25.6 m · Peso máx. de decolagem: 185070 kg.',
+      comportamento: 'Velocidade máxima: 2170 km/h · Altitude máxima: 18300 m.',
+      conservacao: 'Assentos/tripulação: 128.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'boeing_707', name: 'Boeing 707', species: '1957', emoji: '✈️',
+    attrs: { velocidade_kmh: 977, envergadura_m: 39.88, peso_kg: 116120, altitude_m: 12800, assentos: 137 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Boeing_707.jpg', author: 'Boeing_707-138B_Qantas_Jett_Clipper_Johnny_N707JT.jpg: Phinalanjiderivative work: Altair78, CC BY-SA 2.0, via Wikimedia Commons', license: 'CC BY SA 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1957.',
+      alimentacao: 'Envergadura: 39.88 m · Peso máx. de decolagem: 116120 kg.',
+      comportamento: 'Velocidade máxima: 977 km/h · Altitude máxima: 12800 m.',
+      conservacao: 'Assentos/tripulação: 137.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'boeing_727_100', name: 'Boeing 727-100', species: '1963', emoji: '✈️',
+    attrs: { velocidade_kmh: 926, envergadura_m: 40.59, peso_kg: 73275, altitude_m: 12800, assentos: 131 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Boeing_727.jpg', author: 'Iberia Airlines, CC BY 2.0, via Wikimedia Commons', license: 'CC BY 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1963.',
+      alimentacao: 'Envergadura: 40.59 m · Peso máx. de decolagem: 73275 kg.',
+      comportamento: 'Velocidade máxima: 926 km/h · Altitude máxima: 12800 m.',
+      conservacao: 'Assentos/tripulação: 131.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'boeing_737_max_9', name: 'Boeing 737 MAX 9', species: '2017', emoji: '✈️',
+    attrs: { velocidade_kmh: 839, envergadura_m: 35.92, peso_kg: 88314, altitude_m: 12500, assentos: 193 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Boeing_737-9_MAX.jpg', author: 'Jeff Hitchcock, CC BY 2.0, via Wikimedia Commons', license: 'CC BY 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2017.',
+      alimentacao: 'Envergadura: 35.92 m · Peso máx. de decolagem: 88314 kg.',
+      comportamento: 'Velocidade máxima: 839 km/h · Altitude máxima: 12500 m.',
+      conservacao: 'Assentos/tripulação: 193.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'boeing_747_8', name: 'Boeing 747-8', species: '2010', emoji: '✈️',
+    attrs: { velocidade_kmh: 920, envergadura_m: 68.5, peso_kg: 447696, altitude_m: 13140, assentos: 605 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Boeing_747-8.jpg', author: 'RayAdvait, CC BY-SA 4.0, via Wikimedia Commons', license: 'CC BY SA 4.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2010.',
+      alimentacao: 'Envergadura: 68.5 m · Peso máx. de decolagem: 447696 kg.',
+      comportamento: 'Velocidade máxima: 920 km/h · Altitude máxima: 13140 m.',
+      conservacao: 'Assentos/tripulação: 605.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'boeing_757_200', name: 'Boeing 757-200', species: '1982', emoji: '✈️',
+    attrs: { velocidade_kmh: 876, envergadura_m: 38.05, peso_kg: 108862, altitude_m: 12800, assentos: 200 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Boeing_757.jpg', author: 'Dylan Ashe from San Jose, USA, CC BY-SA 2.0, via Wikimedia Commons', license: 'CC BY SA 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1982.',
+      alimentacao: 'Envergadura: 38.05 m · Peso máx. de decolagem: 108862 kg.',
+      comportamento: 'Velocidade máxima: 876 km/h · Altitude máxima: 12800 m.',
+      conservacao: 'Assentos/tripulação: 200.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'boeing_777_300', name: 'Boeing 777-300', species: '1997', emoji: '✈️',
+    attrs: { velocidade_kmh: 950, envergadura_m: 60.9, peso_kg: 299370, altitude_m: 13140, assentos: 550 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Boeing_77-300.jpg', author: 'Amayagan, CC0, via Wikimedia Commons', license: 'CC0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1997.',
+      alimentacao: 'Envergadura: 60.9 m · Peso máx. de decolagem: 299370 kg.',
+      comportamento: 'Velocidade máxima: 950 km/h · Altitude máxima: 13140 m.',
+      conservacao: 'Assentos/tripulação: 550.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'boeing_767_200', name: 'Boeing 767-200', species: '1981', emoji: '✈️',
+    attrs: { velocidade_kmh: 914, envergadura_m: 47.57, peso_kg: 179169, altitude_m: 13140, assentos: 216 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Boeing_767-200.jpg', author: 'Amayagan, CC0, via Wikimedia Commons', license: 'CC0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1981.',
+      alimentacao: 'Envergadura: 47.57 m · Peso máx. de decolagem: 179169 kg.',
+      comportamento: 'Velocidade máxima: 914 km/h · Altitude máxima: 13140 m.',
+      conservacao: 'Assentos/tripulação: 216.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'boeing_787_10', name: 'Boeing 787-10', species: '2017', emoji: '✈️',
+    attrs: { velocidade_kmh: 954, envergadura_m: 60.12, peso_kg: 254011, altitude_m: 12530, assentos: 336 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Boeing_787.jpg', author: 'Adam Moreira (AEMoreira042281), CC BY-SA 4.0, via Wikimedia Commons', license: 'CC BY SA 4.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2017.',
+      alimentacao: 'Envergadura: 60.12 m · Peso máx. de decolagem: 254011 kg.',
+      comportamento: 'Velocidade máxima: 954 km/h · Altitude máxima: 12530 m.',
+      conservacao: 'Assentos/tripulação: 336.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'boeing_b_29_superfortress', name: 'Boeing B-29 Superfortress', species: '1942', emoji: '✈️',
+    attrs: { velocidade_kmh: 575, envergadura_m: 43.05, peso_kg: 61000, altitude_m: 9710, assentos: 11 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Boeing_B-29.jpg', author: 'Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1942.',
+      alimentacao: 'Envergadura: 43.05 m · Peso máx. de decolagem: 61000 kg.',
+      comportamento: 'Velocidade máxima: 575 km/h · Altitude máxima: 9710 m.',
+      conservacao: 'Assentos/tripulação: 11.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'boeing_b_52_stratofortress', name: 'Boeing B-52 Stratofortress', species: '1952', emoji: '✈️',
+    attrs: { velocidade_kmh: 1014, envergadura_m: 56.39, peso_kg: 221353, altitude_m: 16765, assentos: 6 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Boeing_B-52.jpg', author: 'Pseudopanax at English Wikipedia, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1952.',
+      alimentacao: 'Envergadura: 56.39 m · Peso máx. de decolagem: 221353 kg.',
+      comportamento: 'Velocidade máxima: 1014 km/h · Altitude máxima: 16765 m.',
+      conservacao: 'Assentos/tripulação: 6.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'boeing_c_17_globemaster_iii', name: 'Boeing C-17 Globemaster III', species: '1991', emoji: '✈️',
+    attrs: { velocidade_kmh: 830, envergadura_m: 51.77, peso_kg: 265352, altitude_m: 13720, assentos: 3 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Boeing_C-17.jpg', author: 'Balon Greyjoy, CC0, via Wikimedia Commons', license: 'CC0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1991.',
+      alimentacao: 'Envergadura: 51.77 m · Peso máx. de decolagem: 265352 kg.',
+      comportamento: 'Velocidade máxima: 830 km/h · Altitude máxima: 13720 m.',
+      conservacao: 'Assentos/tripulação: 3.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'lockheed_martin_f_22_raptor', name: 'Lockheed Martin F-22 Raptor', species: '1997', emoji: '✈️',
+    attrs: { velocidade_kmh: 2778, envergadura_m: 13.56, peso_kg: 27216, altitude_m: 19812, assentos: 1 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/F-22.jpg', author: 'Rob Shenk from Great Falls, VA, USA, CC BY-SA 2.0, via Wikimedia Commons', license: 'CC BY SA 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1997.',
+      alimentacao: 'Envergadura: 13.56 m · Peso máx. de decolagem: 27216 kg.',
+      comportamento: 'Velocidade máxima: 2778 km/h · Altitude máxima: 19812 m.',
+      conservacao: 'Assentos/tripulação: 1.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'messerschmitt_me_262', name: 'Messerschmitt Me 262', species: '1942', emoji: '✈️',
+    attrs: { velocidade_kmh: 900, envergadura_m: 12.6, peso_kg: 7130, altitude_m: 11450, assentos: 1 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Messerschmitt_Me-262.jpg', author: 'Clemens Vasters from Viersen, Germany, Germany, CC BY 2.0, via Wikimedia Commons', license: 'CC BY 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1942.',
+      alimentacao: 'Envergadura: 12.6 m · Peso máx. de decolagem: 7130 kg.',
+      comportamento: 'Velocidade máxima: 900 km/h · Altitude máxima: 11450 m.',
+      conservacao: 'Assentos/tripulação: 1.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'lockheed_sr_71_blackbird', name: 'Lockheed SR-71 Blackbird', species: '1964', emoji: '✈️',
+    attrs: { velocidade_kmh: 3529, envergadura_m: 16.94, peso_kg: 77112, altitude_m: 26213, assentos: 2 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/SR-71.jpg', author: 'Tech. Sgt. Michael Haggerty, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1964.',
+      alimentacao: 'Envergadura: 16.94 m · Peso máx. de decolagem: 77112 kg.',
+      comportamento: 'Velocidade máxima: 3529 km/h · Altitude máxima: 26213 m.',
+      conservacao: 'Assentos/tripulação: 2.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'learjet_23', name: 'Learjet 23', species: '1963', emoji: '✈️',
+    attrs: { velocidade_kmh: 860, envergadura_m: 13.18, peso_kg: 5670, altitude_m: 12500, assentos: 8 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Learjet_23.jpg', author: 'User:my name, CC BY-SA 3.0, via Wikimedia Commons', license: 'CC BY SA 3.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1963.',
+      alimentacao: 'Envergadura: 13.18 m · Peso máx. de decolagem: 5670 kg.',
+      comportamento: 'Velocidade máxima: 860 km/h · Altitude máxima: 12500 m.',
+      conservacao: 'Assentos/tripulação: 8.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'douglas_dc_3', name: 'Douglas DC-3', species: '1935', emoji: '✈️',
+    attrs: { velocidade_kmh: 368, envergadura_m: 29.98, peso_kg: 13190, altitude_m: 7315, assentos: 30 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Douglas_DC-3.JPG', author: 'MKFI, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1935.',
+      alimentacao: 'Envergadura: 29.98 m · Peso máx. de decolagem: 13190 kg.',
+      comportamento: 'Velocidade máxima: 368 km/h · Altitude máxima: 7315 m.',
+      conservacao: 'Assentos/tripulação: 30.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'cessna_172', name: 'Cessna 172', species: '1955', emoji: '✈️',
+    attrs: { velocidade_kmh: 233, envergadura_m: 11, peso_kg: 1157, altitude_m: 4267, assentos: 3 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Cessna_172.jpg', author: 'AlfvanBeem, CC0, via Wikimedia Commons', license: 'CC0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1955.',
+      alimentacao: 'Envergadura: 11 m · Peso máx. de decolagem: 1157 kg.',
+      comportamento: 'Velocidade máxima: 233 km/h · Altitude máxima: 4267 m.',
+      conservacao: 'Assentos/tripulação: 3.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'cessna_citation_i', name: 'Cessna Citation I', species: '1976', emoji: '✈️',
+    attrs: { velocidade_kmh: 662, envergadura_m: 14.35, peso_kg: 5375, altitude_m: 12500, assentos: 7 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Cessna_Citation.jpg', author: 'aeroprints.com, CC BY-SA 3.0, via Wikimedia Commons', license: 'CC BY SA 3.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1976.',
+      alimentacao: 'Envergadura: 14.35 m · Peso máx. de decolagem: 5375 kg.',
+      comportamento: 'Velocidade máxima: 662 km/h · Altitude máxima: 12500 m.',
+      conservacao: 'Assentos/tripulação: 7.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'gulfstream_g650', name: 'Gulfstream G650', species: '2009', emoji: '✈️',
+    attrs: { velocidade_kmh: 983, envergadura_m: 30.35, peso_kg: 45200, altitude_m: 15545, assentos: 20 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Gulfstream_G600.jpg', author: 'Myself (Adrian Pingstone)., Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2009.',
+      alimentacao: 'Envergadura: 30.35 m · Peso máx. de decolagem: 45200 kg.',
+      comportamento: 'Velocidade máxima: 983 km/h · Altitude máxima: 15545 m.',
+      conservacao: 'Assentos/tripulação: 20.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'dassault_falcon_7x', name: 'Dassault Falcon 7X', species: '2005', emoji: '✈️',
+    attrs: { velocidade_kmh: 970, envergadura_m: 26.21, peso_kg: 31300, altitude_m: 14935, assentos: 21 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Dassault_Falcon_7X.jpg', author: 'Dylan Agbagni (No copyrights) from Bayonne, France, CC0, via Wikimedia Commons', license: 'CC0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2005.',
+      alimentacao: 'Envergadura: 26.21 m · Peso máx. de decolagem: 31300 kg.',
+      comportamento: 'Velocidade máxima: 970 km/h · Altitude máxima: 14935 m.',
+      conservacao: 'Assentos/tripulação: 21.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'supermarine_spitfire', name: 'Supermarine Spitfire', species: '1936', emoji: '✈️',
+    attrs: { velocidade_kmh: 600, envergadura_m: 11.23, peso_kg: 3039, altitude_m: 11100, assentos: 1 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Spitfire.jpg', author: 'Airwolfhound, CC BY-SA 2.0, via Wikimedia Commons', license: 'CC BY SA 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1936.',
+      alimentacao: 'Envergadura: 11.23 m · Peso máx. de decolagem: 3039 kg.',
+      comportamento: 'Velocidade máxima: 600 km/h · Altitude máxima: 11100 m.',
+      conservacao: 'Assentos/tripulação: 1.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'antonov_an_225_mriya', name: 'Antonov An-225 Mriya', species: '1988', emoji: '✈️',
+    attrs: { velocidade_kmh: 850, envergadura_m: 88.4, peso_kg: 640000, altitude_m: 11610, assentos: 6 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Antonov_An-225.jpg', author: 'Boevaya mashina, CC BY-SA 3.0, via Wikimedia Commons', license: 'CC BY SA 3.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1988.',
+      alimentacao: 'Envergadura: 88.4 m · Peso máx. de decolagem: 640000 kg.',
+      comportamento: 'Velocidade máxima: 850 km/h · Altitude máxima: 11610 m.',
+      conservacao: 'Assentos/tripulação: 6.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'bleriot_xi', name: 'Blériot XI', species: '1909', emoji: '✈️',
+    attrs: { velocidade_kmh: 75, envergadura_m: 7.8, peso_kg: 320, altitude_m: 1000, assentos: 1 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Bleriot.jpg', author: 'Bain News Service, publisher, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1909.',
+      alimentacao: 'Envergadura: 7.8 m · Peso máx. de decolagem: 320 kg.',
+      comportamento: 'Velocidade máxima: 75 km/h · Altitude máxima: 1000 m.',
+      conservacao: 'Assentos/tripulação: 1.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'bell_x_1', name: 'Bell X-1', species: '1946', emoji: '✈️',
+    attrs: { velocidade_kmh: 1540, envergadura_m: 8.53, peso_kg: 6078, altitude_m: 19000, assentos: 1 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Bell_X-1.jpg', author: 'NASA, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1946.',
+      alimentacao: 'Envergadura: 8.53 m · Peso máx. de decolagem: 6078 kg.',
+      comportamento: 'Velocidade máxima: 1540 km/h · Altitude máxima: 19000 m.',
+      conservacao: 'Assentos/tripulação: 1.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'spirit_of_st_louis', name: 'Spirit of St. Louis', species: '1927', emoji: '✈️',
+    attrs: { velocidade_kmh: 214, envergadura_m: 14.03, peso_kg: 2330, altitude_m: 5000, assentos: 1 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Spirit_of_St._Louis.jpg', author: 'Gary Todd from Xinzheng, China, CC0, via Wikimedia Commons', license: 'CC0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1927.',
+      alimentacao: 'Envergadura: 14.03 m · Peso máx. de decolagem: 2330 kg.',
+      comportamento: 'Velocidade máxima: 214 km/h · Altitude máxima: 5000 m.',
+      conservacao: 'Assentos/tripulação: 1.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'tupolew_tu_154', name: 'Tupolew Tu-154', species: '1968', emoji: '✈️',
+    attrs: { velocidade_kmh: 913, envergadura_m: 37.55, peso_kg: 100000, altitude_m: 12100, assentos: 180 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Tupolev_Tu-154.jpg', author: 'Dmitry A. Mottl, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1968.',
+      alimentacao: 'Envergadura: 37.55 m · Peso máx. de decolagem: 100000 kg.',
+      comportamento: 'Velocidade máxima: 913 km/h · Altitude máxima: 12100 m.',
+      conservacao: 'Assentos/tripulação: 180.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'tupolew_tu_144', name: 'Tupolew Tu-144', species: '1968', emoji: '✈️',
+    attrs: { velocidade_kmh: 2587, envergadura_m: 27.65, peso_kg: 180000, altitude_m: 20000, assentos: 120 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Tupolev_Tu-144.jpg', author: 'SDASM, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1968.',
+      alimentacao: 'Envergadura: 27.65 m · Peso máx. de decolagem: 180000 kg.',
+      comportamento: 'Velocidade máxima: 2587 km/h · Altitude máxima: 20000 m.',
+      conservacao: 'Assentos/tripulação: 120.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'mikoyan_gurevich_mig_21', name: 'Mikoyan-Gurevich MiG-21', species: '1955', emoji: '✈️',
+    attrs: { velocidade_kmh: 2175, envergadura_m: 7.15, peso_kg: 8800, altitude_m: 17500, assentos: 1 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/MiG-21.jpg', author: 'Fotovlucht Vliegbasis Soesterberg, CC0, via Wikimedia Commons', license: 'CC0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1955.',
+      alimentacao: 'Envergadura: 7.15 m · Peso máx. de decolagem: 8800 kg.',
+      comportamento: 'Velocidade máxima: 2175 km/h · Altitude máxima: 17500 m.',
+      conservacao: 'Assentos/tripulação: 1.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'tupolev_tu_104', name: 'Tupolev Tu-104', species: '1955', emoji: '✈️',
+    attrs: { velocidade_kmh: 950, envergadura_m: 34.54, peso_kg: 78100, altitude_m: 12000, assentos: 115 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Tupolev_Tu-104.jpg', author: 'Lars Soderstrom, CC BY-SA 3.0, via Wikimedia Commons', license: 'CC BY SA 3.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1955.',
+      alimentacao: 'Envergadura: 34.54 m · Peso máx. de decolagem: 78100 kg.',
+      comportamento: 'Velocidade máxima: 950 km/h · Altitude máxima: 12000 m.',
+      conservacao: 'Assentos/tripulação: 115.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'tupolew_tu_95', name: 'Tupolew Tu-95', species: '1952', emoji: '✈️',
+    attrs: { velocidade_kmh: 882, envergadura_m: 50.04, peso_kg: 172000, altitude_m: 11900, assentos: 8 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Tupolev_Tu-95.jpg', author: 'Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1952.',
+      alimentacao: 'Envergadura: 50.04 m · Peso máx. de decolagem: 172000 kg.',
+      comportamento: 'Velocidade máxima: 882 km/h · Altitude máxima: 11900 m.',
+      conservacao: 'Assentos/tripulação: 8.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'iljuschin_il_62', name: 'Iljuschin Il-62', species: '1963', emoji: '✈️',
+    attrs: { velocidade_kmh: 950, envergadura_m: 43.2, peso_kg: 165000, altitude_m: 13000, assentos: 186 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Iljuschin_Il-62.jpg', author: 'Michael Laue, CC BY-SA 3.0, via Wikimedia Commons', license: 'CC BY SA 3.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1963.',
+      alimentacao: 'Envergadura: 43.2 m · Peso máx. de decolagem: 165000 kg.',
+      comportamento: 'Velocidade máxima: 950 km/h · Altitude máxima: 13000 m.',
+      conservacao: 'Assentos/tripulação: 186.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'iljuschin_il_96', name: 'Iljuschin Il-96', species: '1988', emoji: '✈️',
+    attrs: { velocidade_kmh: 870, envergadura_m: 57.6, peso_kg: 250000, altitude_m: 12000, assentos: 300 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Iljuschin_Il-96.jpg', author: 'Dmitry A. Mottl, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1988.',
+      alimentacao: 'Envergadura: 57.6 m · Peso máx. de decolagem: 250000 kg.',
+      comportamento: 'Velocidade máxima: 870 km/h · Altitude máxima: 12000 m.',
+      conservacao: 'Assentos/tripulação: 300.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'bombardier_crj_100', name: 'Bombardier CRJ 100', species: '1991', emoji: '✈️',
+    attrs: { velocidade_kmh: 860, envergadura_m: 21.18, peso_kg: 24041, altitude_m: 12496, assentos: 50 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Bombardier_CRJ-100.jpg', author: 'Arpingstone, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1991.',
+      alimentacao: 'Envergadura: 21.18 m · Peso máx. de decolagem: 24041 kg.',
+      comportamento: 'Velocidade máxima: 860 km/h · Altitude máxima: 12496 m.',
+      conservacao: 'Assentos/tripulação: 50.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'embraer_e_jet_195_e2', name: 'Embraer E-Jet 195-E2', species: '2019', emoji: '✈️',
+    attrs: { velocidade_kmh: 876, envergadura_m: 35.1, peso_kg: 61500, altitude_m: 12500, assentos: 146 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Embraer_E-Jet.jpg', author: 'Robbie Klinkenberg, CC BY-SA 4.0, via Wikimedia Commons', license: 'CC BY SA 4.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2019.',
+      alimentacao: 'Envergadura: 35.1 m · Peso máx. de decolagem: 61500 kg.',
+      comportamento: 'Velocidade máxima: 876 km/h · Altitude máxima: 12500 m.',
+      conservacao: 'Assentos/tripulação: 146.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'junkers_ju_52', name: 'Junkers Ju 52', species: '1932', emoji: '✈️',
+    attrs: { velocidade_kmh: 290, envergadura_m: 29.25, peso_kg: 10500, altitude_m: 6300, assentos: 20 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Ju52.JPG', author: 'Markus Kress, CC BY-SA 3.0, via Wikimedia Commons', license: 'CC BY SA 3.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1932.',
+      alimentacao: 'Envergadura: 29.25 m · Peso máx. de decolagem: 10500 kg.',
+      comportamento: 'Velocidade máxima: 290 km/h · Altitude máxima: 6300 m.',
+      conservacao: 'Assentos/tripulação: 20.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'de_havilland_comet', name: 'De Havilland Comet', species: '1949', emoji: '✈️',
+    attrs: { velocidade_kmh: 740, envergadura_m: 35, peso_kg: 50000, altitude_m: 13000, assentos: 44 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/DH_Comet.jpg', author: 'Rob Hodgkins, CC BY-SA 2.0, via Wikimedia Commons', license: 'CC BY SA 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1949.',
+      alimentacao: 'Envergadura: 35 m · Peso máx. de decolagem: 50000 kg.',
+      comportamento: 'Velocidade máxima: 740 km/h · Altitude máxima: 13000 m.',
+      conservacao: 'Assentos/tripulação: 44.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'mcdonnell_douglas_md_11', name: 'McDonnell Douglas MD-11', species: '1990', emoji: '✈️',
+    attrs: { velocidade_kmh: 940, envergadura_m: 51.97, peso_kg: 273294, altitude_m: 13100, assentos: 298 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/MD-11.JPG', author: 'Alf van Beem, CC0, via Wikimedia Commons', license: 'CC0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1990.',
+      alimentacao: 'Envergadura: 51.97 m · Peso máx. de decolagem: 273294 kg.',
+      comportamento: 'Velocidade máxima: 940 km/h · Altitude máxima: 13100 m.',
+      conservacao: 'Assentos/tripulação: 298.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'comac_c919', name: 'Comac C919', species: '2017', emoji: '✈️',
+    attrs: { velocidade_kmh: 838, envergadura_m: 35.8, peso_kg: 75100, altitude_m: 12100, assentos: 192 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/COMAC_C919.jpg', author: 'Ken Chen, CC BY-SA 4.0, via Wikimedia Commons', license: 'CC BY SA 4.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2017.',
+      alimentacao: 'Envergadura: 35.8 m · Peso máx. de decolagem: 75100 kg.',
+      comportamento: 'Velocidade máxima: 838 km/h · Altitude máxima: 12100 m.',
+      conservacao: 'Assentos/tripulação: 192.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'dornier_do_x', name: 'Dornier Do X', species: '1929', emoji: '✈️',
+    attrs: { velocidade_kmh: 242, envergadura_m: 47.8, peso_kg: 56000, altitude_m: 3200, assentos: 170 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Dornier_Do-X.jpg', author: 'Chief Photographers Mate John Lee Highfill, USN; SDASM Archives, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1929.',
+      alimentacao: 'Envergadura: 47.8 m · Peso máx. de decolagem: 56000 kg.',
+      comportamento: 'Velocidade máxima: 242 km/h · Altitude máxima: 3200 m.',
+      conservacao: 'Assentos/tripulação: 170.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'bell_boeing_v_22_osprey', name: 'Bell Boeing V-22 Osprey', species: '1989', emoji: '✈️',
+    attrs: { velocidade_kmh: 565, envergadura_m: 13.97, peso_kg: 27442, altitude_m: 7600, assentos: 28 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Bell_Boeing_CV-22B_Osprey.jpg', author: 'Alan Wilson from Stilton, Peterborough, Cambs, UK, CC BY-SA 2.0, via Wikimedia Commons', license: 'CC BY SA 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1989.',
+      alimentacao: 'Envergadura: 13.97 m · Peso máx. de decolagem: 27442 kg.',
+      comportamento: 'Velocidade máxima: 565 km/h · Altitude máxima: 7600 m.',
+      conservacao: 'Assentos/tripulação: 28.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'de_havilland_dhc_8_400', name: 'De Havilland DHC-8 400', species: '1998', emoji: '✈️',
+    attrs: { velocidade_kmh: 667, envergadura_m: 28.42, peso_kg: 29574, altitude_m: 7620, assentos: 90 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/De_Havilland_Canada_DHC-8-400.jpg', author: 'Björn Strey, CC BY-SA 2.0, via Wikimedia Commons', license: 'CC BY SA 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1998.',
+      alimentacao: 'Envergadura: 28.42 m · Peso máx. de decolagem: 29574 kg.',
+      comportamento: 'Velocidade máxima: 667 km/h · Altitude máxima: 7620 m.',
+      conservacao: 'Assentos/tripulação: 90.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'dornier_do_31', name: 'Dornier Do 31', species: '1967', emoji: '✈️',
+    attrs: { velocidade_kmh: 750, envergadura_m: 18.06, peso_kg: 24500, altitude_m: 10700, assentos: 2 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Dornier_Do_31.jpg', author: 'Michael Dolan, CC BY 2.0, via Wikimedia Commons', license: 'CC BY 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1967.',
+      alimentacao: 'Envergadura: 18.06 m · Peso máx. de decolagem: 24500 kg.',
+      comportamento: 'Velocidade máxima: 750 km/h · Altitude máxima: 10700 m.',
+      conservacao: 'Assentos/tripulação: 2.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'piaggio_avanti_p180', name: 'Piaggio Avanti P180', species: '1986', emoji: '✈️',
+    attrs: { velocidade_kmh: 732, envergadura_m: 14.03, peso_kg: 5239, altitude_m: 12500, assentos: 8 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Piaggio_P-180_Avanti.jpg', author: 'Tibboh at French Wikipedia, CC BY-SA 3.0, via Wikimedia Commons', license: 'CC BY SA 3.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1986.',
+      alimentacao: 'Envergadura: 14.03 m · Peso máx. de decolagem: 5239 kg.',
+      comportamento: 'Velocidade máxima: 732 km/h · Altitude máxima: 12500 m.',
+      conservacao: 'Assentos/tripulação: 8.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'f4u_corsair', name: 'F4U Corsair', species: '1940', emoji: '✈️',
+    attrs: { velocidade_kmh: 717, envergadura_m: 12.5, peso_kg: 6592, altitude_m: 12600, assentos: 1 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/F4U_Corsair.jpg', author: 'Airwolfhound from  Hertfordshire, UK, CC BY-SA 2.0, via Wikimedia Commons', license: 'CC BY SA 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1940.',
+      alimentacao: 'Envergadura: 12.5 m · Peso máx. de decolagem: 6592 kg.',
+      comportamento: 'Velocidade máxima: 717 km/h · Altitude máxima: 12600 m.',
+      conservacao: 'Assentos/tripulação: 1.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'convair_xfy_pogo', name: 'Convair XFY Pogo', species: '1954', emoji: '✈️',
+    attrs: { velocidade_kmh: 980, envergadura_m: 8.43, peso_kg: 7371, altitude_m: 10000, assentos: 1 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Convair_XFY_Pogo.jpg', author: 'USN, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1954.',
+      alimentacao: 'Envergadura: 8.43 m · Peso máx. de decolagem: 7371 kg.',
+      comportamento: 'Velocidade máxima: 980 km/h · Altitude máxima: 10000 m.',
+      conservacao: 'Assentos/tripulação: 1.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'heinkel_he_178', name: 'Heinkel He 178', species: '1939', emoji: '✈️',
+    attrs: { velocidade_kmh: 700, envergadura_m: 7.2, peso_kg: 2000, altitude_m: 8000, assentos: 1 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Heinkel_He_178.jpg', author: 'Gryffindor, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1939.',
+      alimentacao: 'Envergadura: 7.2 m · Peso máx. de decolagem: 2000 kg.',
+      comportamento: 'Velocidade máxima: 700 km/h · Altitude máxima: 8000 m.',
+      conservacao: 'Assentos/tripulação: 1.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'av_8b_harrier_jet', name: 'AV-8B Harrier jet', species: '1983', emoji: '✈️',
+    attrs: { velocidade_kmh: 1065, envergadura_m: 9.25, peso_kg: 14100, altitude_m: 14000, assentos: 1 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Harrier_jump_jet.jpg', author: 'Official U.S. Navy Page from United States of AmericaMC1 Gretchen Albrecht/U.S. Navy, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1983.',
+      alimentacao: 'Envergadura: 9.25 m · Peso máx. de decolagem: 14100 kg.',
+      comportamento: 'Velocidade máxima: 1065 km/h · Altitude máxima: 14000 m.',
+      conservacao: 'Assentos/tripulação: 1.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'northrop_b_2_spirit', name: 'Northrop B-2 Spirit', species: '1989', emoji: '✈️',
+    attrs: { velocidade_kmh: 1010, envergadura_m: 52.4, peso_kg: 152635, altitude_m: 15152, assentos: 2 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Northrop_B-2.jpg', author: 'Senior Airman Keith James, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1989.',
+      alimentacao: 'Envergadura: 52.4 m · Peso máx. de decolagem: 152635 kg.',
+      comportamento: 'Velocidade máxima: 1010 km/h · Altitude máxima: 15152 m.',
+      conservacao: 'Assentos/tripulação: 2.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'cirrus_sr22', name: 'Cirrus SR22', species: '2001', emoji: '✈️',
+    attrs: { velocidade_kmh: 330, envergadura_m: 11.68, peso_kg: 1542, altitude_m: 5300, assentos: 4 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Cirrus_SR22.jpg', author: 'James from Cheltenham, Gloucestershire, CC BY-SA 2.0, via Wikimedia Commons', license: 'CC BY SA 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2001.',
+      alimentacao: 'Envergadura: 11.68 m · Peso máx. de decolagem: 1542 kg.',
+      comportamento: 'Velocidade máxima: 330 km/h · Altitude máxima: 5300 m.',
+      conservacao: 'Assentos/tripulação: 4.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'piper_j_3_cub', name: 'Piper J-3 Cub', species: '1938', emoji: '✈️',
+    attrs: { velocidade_kmh: 140, envergadura_m: 10.74, peso_kg: 550, altitude_m: 3500, assentos: 2 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Piper_J-3_Cub.jpg', author: 'Alan Wilson from Stilton, Peterborough, Cambs, UK, CC BY-SA 2.0, via Wikimedia Commons', license: 'CC BY SA 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1938.',
+      alimentacao: 'Envergadura: 10.74 m · Peso máx. de decolagem: 550 kg.',
+      comportamento: 'Velocidade máxima: 140 km/h · Altitude máxima: 3500 m.',
+      conservacao: 'Assentos/tripulação: 2.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'boeing_307_stratoliner', name: 'Boeing 307 Stratoliner', species: '1938', emoji: '✈️',
+    attrs: { velocidade_kmh: 400, envergadura_m: 32.7, peso_kg: 20400, altitude_m: 7300, assentos: 33 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Boeing_307.jpg', author: 'SDASM Archives, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1938.',
+      alimentacao: 'Envergadura: 32.7 m · Peso máx. de decolagem: 20400 kg.',
+      comportamento: 'Velocidade máxima: 400 km/h · Altitude máxima: 7300 m.',
+      conservacao: 'Assentos/tripulação: 33.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'rutan_voyager', name: 'Rutan Voyager', species: '1984', emoji: '✈️',
+    attrs: { velocidade_kmh: 240, envergadura_m: 33.8, peso_kg: 4400, altitude_m: 6250, assentos: 2 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Rutan Voyager.jpg', author: 'NASA/Thomas Harrop, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1984.',
+      alimentacao: 'Envergadura: 33.8 m · Peso máx. de decolagem: 4400 kg.',
+      comportamento: 'Velocidade máxima: 240 km/h · Altitude máxima: 6250 m.',
+      conservacao: 'Assentos/tripulação: 2.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'general_atomics_mq_1_predator', name: 'General Atomics MQ-1 Predator', species: '1995', emoji: '✈️',
+    attrs: { velocidade_kmh: 222, envergadura_m: 14.84, peso_kg: 1020, altitude_m: 7620, assentos: 0 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/General_Atomics_MQ-1.jpg', author: 'United States Air Force, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1995.',
+      alimentacao: 'Envergadura: 14.84 m · Peso máx. de decolagem: 1020 kg.',
+      comportamento: 'Velocidade máxima: 222 km/h · Altitude máxima: 7620 m.',
+      conservacao: 'Assentos/tripulação: 0.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'antonov_an_2', name: 'Antonov An-2', species: '1947', emoji: '✈️',
+    attrs: { velocidade_kmh: 258, envergadura_m: 18.18, peso_kg: 5500, altitude_m: 4400, assentos: 12 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Antonov_An-2.jpg', author: 'Garitzko, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1947.',
+      alimentacao: 'Envergadura: 18.18 m · Peso máx. de decolagem: 5500 kg.',
+      comportamento: 'Velocidade máxima: 258 km/h · Altitude máxima: 4400 m.',
+      conservacao: 'Assentos/tripulação: 12.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'british_aerospace_146_100', name: 'British Aerospace 146-100', species: '1981', emoji: '✈️',
+    attrs: { velocidade_kmh: 789, envergadura_m: 26.34, peso_kg: 38101, altitude_m: 11000, assentos: 82 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/British_Aerospace-146-100.jpg', author: 'Julian Herzog, CC BY 4.0, via Wikimedia Commons', license: 'CC BY 4.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1981.',
+      alimentacao: 'Envergadura: 26.34 m · Peso máx. de decolagem: 38101 kg.',
+      comportamento: 'Velocidade máxima: 789 km/h · Altitude máxima: 11000 m.',
+      conservacao: 'Assentos/tripulação: 82.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'maccready_gossamer_albatross', name: 'MacCready Gossamer Albatross', species: '1979', emoji: '✈️',
+    attrs: { velocidade_kmh: 29, envergadura_m: 29.77, peso_kg: 98, altitude_m: 1.5, assentos: 1 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/MacCready_Gossamer_Albatross.jpg', author: 'NASA, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1979.',
+      alimentacao: 'Envergadura: 29.77 m · Peso máx. de decolagem: 98 kg.',
+      comportamento: 'Velocidade máxima: 29 km/h · Altitude máxima: 1.5 m.',
+      conservacao: 'Assentos/tripulação: 1.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'convair_880', name: 'Convair 880', species: '1959', emoji: '✈️',
+    attrs: { velocidade_kmh: 990, envergadura_m: 36.58, peso_kg: 87730, altitude_m: 12500, assentos: 110 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Convair_880.jpg', author: 'SDASM Archives, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1959.',
+      alimentacao: 'Envergadura: 36.58 m · Peso máx. de decolagem: 87730 kg.',
+      comportamento: 'Velocidade máxima: 990 km/h · Altitude máxima: 12500 m.',
+      conservacao: 'Assentos/tripulação: 110.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'yakovlev_yak_40', name: 'Yakovlev Yak-40', species: '1966', emoji: '✈️',
+    attrs: { velocidade_kmh: 550, envergadura_m: 25, peso_kg: 15500, altitude_m: 8000, assentos: 35 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Yakovlev_Yak-40.jpg', author: 'parfaits, CC BY-SA 3.0, via Wikimedia Commons', license: 'CC BY SA 3.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1966.',
+      alimentacao: 'Envergadura: 25 m · Peso máx. de decolagem: 15500 kg.',
+      comportamento: 'Velocidade máxima: 550 km/h · Altitude máxima: 8000 m.',
+      conservacao: 'Assentos/tripulação: 35.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'dassault_mercure_100', name: 'Dassault Mercure 100', species: '1971', emoji: '✈️',
+    attrs: { velocidade_kmh: 925, envergadura_m: 30.55, peso_kg: 56500, altitude_m: 12000, assentos: 162 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Dassault_Mercure.jpg', author: 'Udo K. Haafke, GFDL 1.2, via Wikimedia Commons', license: 'GFDL 1.2' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1971.',
+      alimentacao: 'Envergadura: 30.55 m · Peso máx. de decolagem: 56500 kg.',
+      comportamento: 'Velocidade máxima: 925 km/h · Altitude máxima: 12000 m.',
+      conservacao: 'Assentos/tripulação: 162.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'lockheed_f_117_nighthawk', name: 'Lockheed F-117 Nighthawk', species: '1981', emoji: '✈️',
+    attrs: { velocidade_kmh: 1040, envergadura_m: 13.21, peso_kg: 23814, altitude_m: 14000, assentos: 1 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Lockheed_F-117.jpg', author: 'Staff Sgt. Aaron Allmon II, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1981.',
+      alimentacao: 'Envergadura: 13.21 m · Peso máx. de decolagem: 23814 kg.',
+      comportamento: 'Velocidade máxima: 1040 km/h · Altitude máxima: 14000 m.',
+      conservacao: 'Assentos/tripulação: 1.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'fokker_100', name: 'Fokker 100', species: '1986', emoji: '✈️',
+    attrs: { velocidade_kmh: 845, envergadura_m: 28.08, peso_kg: 45810, altitude_m: 11000, assentos: 122 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Fokker_100.jpg', author: 'Alf van Beem, CC0, via Wikimedia Commons', license: 'CC0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1986.',
+      alimentacao: 'Envergadura: 28.08 m · Peso máx. de decolagem: 45810 kg.',
+      comportamento: 'Velocidade máxima: 845 km/h · Altitude máxima: 11000 m.',
+      conservacao: 'Assentos/tripulação: 122.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'douglas_dc_8', name: 'Douglas DC-8', species: '1958', emoji: '✈️',
+    attrs: { velocidade_kmh: 895, envergadura_m: 43.4, peso_kg: 123800, altitude_m: 12390, assentos: 177 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Douglas_DC-8.jpg', author: 'Richard Vandervord, CC BY-SA 4.0, via Wikimedia Commons', license: 'CC BY SA 4.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1958.',
+      alimentacao: 'Envergadura: 43.4 m · Peso máx. de decolagem: 123800 kg.',
+      comportamento: 'Velocidade máxima: 895 km/h · Altitude máxima: 12390 m.',
+      conservacao: 'Assentos/tripulação: 177.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'lockheed_constellation_l_049', name: 'Lockheed Constellation L-049', species: '1943', emoji: '✈️',
+    attrs: { velocidade_kmh: 504, envergadura_m: 37, peso_kg: 39122, altitude_m: 7700, assentos: 88 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Lockheed_Constellation.jpg', author: 'Mike Lehmann, CC BY-SA 3.0, via Wikimedia Commons', license: 'CC BY SA 3.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1943.',
+      alimentacao: 'Envergadura: 37 m · Peso máx. de decolagem: 39122 kg.',
+      comportamento: 'Velocidade máxima: 504 km/h · Altitude máxima: 7700 m.',
+      conservacao: 'Assentos/tripulação: 88.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'sud_aviation_caravelle', name: 'Sud Aviation Caravelle', species: '1955', emoji: '✈️',
+    attrs: { velocidade_kmh: 746, envergadura_m: 34.3, peso_kg: 45000, altitude_m: 10700, assentos: 80 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Sud_Aviation_Caravelle.jpg', author: 'Ralf Manteufel, GFDL 1.2, via Wikimedia Commons', license: 'GFDL 1.2' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1955.',
+      alimentacao: 'Envergadura: 34.3 m · Peso máx. de decolagem: 45000 kg.',
+      comportamento: 'Velocidade máxima: 746 km/h · Altitude máxima: 10700 m.',
+      conservacao: 'Assentos/tripulação: 80.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'airbus_a220_300', name: 'Airbus A220-300', species: '2015', emoji: '✈️',
+    attrs: { velocidade_kmh: 871, envergadura_m: 35.1, peso_kg: 70900, altitude_m: 12000, assentos: 160 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Airbus_A220-300.jpg', author: 'Anna Zvereva, CC BY-SA 2.0, via Wikimedia Commons', license: 'CC BY SA 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 2015.',
+      alimentacao: 'Envergadura: 35.1 m · Peso máx. de decolagem: 70900 kg.',
+      comportamento: 'Velocidade máxima: 871 km/h · Altitude máxima: 12000 m.',
+      conservacao: 'Assentos/tripulação: 160.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'focke_wulf_fw_200_condor', name: 'Focke-Wulf Fw 200 Condor', species: '1937', emoji: '✈️',
+    attrs: { velocidade_kmh: 406, envergadura_m: 32.84, peso_kg: 24520, altitude_m: 8400, assentos: 30 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Focke-Wulf_Fw_200.jpg', author: 'Anders Beer Wilse (1865-1949), Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1937.',
+      alimentacao: 'Envergadura: 32.84 m · Peso máx. de decolagem: 24520 kg.',
+      comportamento: 'Velocidade máxima: 406 km/h · Altitude máxima: 8400 m.',
+      conservacao: 'Assentos/tripulação: 30.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'vickers_vc10', name: 'Vickers VC10', species: '1962', emoji: '✈️',
+    attrs: { velocidade_kmh: 915, envergadura_m: 44.55, peso_kg: 141000, altitude_m: 11580, assentos: 135 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/Vickers_VC10.jpg', author: 'Airwolfhound from  Hertfordshire, UK, CC BY-SA 2.0, via Wikimedia Commons', license: 'CC BY SA 2.0' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1962.',
+      alimentacao: 'Envergadura: 44.55 m · Peso máx. de decolagem: 141000 kg.',
+      comportamento: 'Velocidade máxima: 915 km/h · Altitude máxima: 11580 m.',
+      conservacao: 'Assentos/tripulação: 135.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  },
+  {
+    id: 'mcdonnell_douglas_dc_9', name: 'McDonnell Douglas DC-9', species: '1965', emoji: '✈️',
+    attrs: { velocidade_kmh: 897, envergadura_m: 28.4, peso_kg: 49940, altitude_m: 11000, assentos: 115 },
+    image: { url: 'https://raw.githubusercontent.com/yanexr/trump-cards/main/client/assets/images/Airplanes/McDonnell_Douglas_DC-9.jpg', author: 'NASA, Public domain, via Wikimedia Commons', license: 'Public domain' },
+    sound: null,
+    wikipediaUrl: '',
+    info: {
+      habitat: 'Ano de estreia: 1965.',
+      alimentacao: 'Envergadura: 28.4 m · Peso máx. de decolagem: 49940 kg.',
+      comportamento: 'Velocidade máxima: 897 km/h · Altitude máxima: 11000 m.',
+      conservacao: 'Assentos/tripulação: 115.',
+      curiosidades: [],
+      fontes: 'Baralho "Airplanes" do repositório aberto yanexr/trump-cards (MIT) — dados técnicos e créditos de imagem dos mantenedores do projeto.'
+    }
+  }
+]
+  }
 };
-const ATTR_ORDER = ['peso_kg', 'velocidade_kmh', 'expectativa_anos', 'altura_cm', 'populacao_estimada'];
+const DEFAULT_THEME_ID = 'selvagem';
+function currentTheme(){ return THEMES[state.themeId] || THEMES[DEFAULT_THEME_ID]; }
 
 function formatAttrValue(attr, value){
-  const meta = ATTR_LABELS[attr];
+  const meta = currentTheme().attrLabels[attr];
   const num = value.toLocaleString('pt-BR');
   return meta.unit ? (num + ' ' + meta.unit) : num;
 }
 
 function shuffledDeck(){
-  const d = DECK.slice();
+  const d = currentTheme().deck.slice();
   for(let i = d.length - 1; i > 0; i--){
     const j = Math.floor(Math.random() * (i + 1));
     [d[i], d[j]] = [d[j], d[i]];
@@ -1439,6 +2731,7 @@ const state = {
   roomCode: null,
   channel: null,
   myName: 'Você',
+  themeId: DEFAULT_THEME_ID, // tema da sala: definido pelo host ao criar, sincronizado via roster/start/stateSync
   players: [],          // [{id, name}] — players[0] é sempre o host (quem criou a sala)
   started: false,
   myPile: [],            // cartas (objetos) do meu monte, na ordem — espelho de playerPiles[myId]
@@ -1812,6 +3105,11 @@ function connectChannel(code, onReady){
     console.log('[Duelo Selvagem] roster recebido:', payload.players);
     state.players = payload.players;
     state.isHost = state.players.length > 0 && state.players[0].id === state.myId;
+    if(payload.themeId && !state.isHost){
+      state.themeId = payload.themeId;
+      applyThemeChrome();
+      renderThemePicker();
+    }
     const amIIn = state.players.some(p => p.id === state.myId);
     if(amIIn && state.joinRetryTimer){
       clearInterval(state.joinRetryTimer);
@@ -1894,7 +3192,8 @@ function connectChannel(code, onReady){
           playerPiles: state.playerPiles,
           turnPlayerId: state.turnPlayerId,
           pot: state.pot.map(c => c.id),
-          roundAttribute: state.roundAttribute
+          roundAttribute: state.roundAttribute,
+          themeId: state.themeId
         }
       });
     }
@@ -1908,6 +3207,10 @@ function connectChannel(code, onReady){
     state.started = true;
     state.players = payload.players;
     state.isHost = state.players.length > 0 && state.players[0].id === state.myId;
+    if(payload.themeId){
+      state.themeId = payload.themeId;
+      applyThemeChrome();
+    }
     state.playerPiles = payload.playerPiles;
     state.myPile = (state.playerPiles[state.myId] || []).map(cardById);
     state.turnPlayerId = payload.turnPlayerId;
@@ -1954,7 +3257,7 @@ function broadcastRoster(){
   state.channel.send({
     type: 'broadcast',
     event: 'roster',
-    payload: { players: state.players }
+    payload: { players: state.players, themeId: state.themeId }
   });
 }
 
@@ -2014,7 +3317,8 @@ function startGameAsHost(){
   const payload = {
     players: state.players,
     piles: piles,
-    turnPlayerId: state.players[0].id
+    turnPlayerId: state.players[0].id,
+    themeId: state.themeId
   };
 
   state.channel.send({ type: 'broadcast', event: 'start', payload: payload });
@@ -2024,6 +3328,10 @@ function startGameAsHost(){
 function applyStart(payload){
   state.started = true;
   state.players = payload.players;
+  if(payload.themeId){
+    state.themeId = payload.themeId;
+    applyThemeChrome();
+  }
   state.playerPiles = payload.piles;
   state.myPile = (state.playerPiles[state.myId] || []).map(id => cardById(id));
   state.turnPlayerId = payload.turnPlayerId;
@@ -2091,11 +3399,11 @@ function renderGame(){
 
   const list = document.getElementById('attrList');
   list.innerHTML = '';
-  ATTR_ORDER.forEach(attr => {
+  currentTheme().attrOrder.forEach(attr => {
     const row = document.createElement('div');
     row.className = 'attr-row' + (isMyTurn && !state.resolving ? ' pickable' : '');
     row.innerHTML =
-      '<span class="attr-label">' + ATTR_LABELS[attr].label + '</span>' +
+      '<span class="attr-label">' + currentTheme().attrLabels[attr].label + '</span>' +
       '<span class="attr-value">' + formatAttrValue(attr, card.attrs[attr]) + '</span>';
     if(isMyTurn && !state.resolving){
       row.addEventListener('click', () => chooseAttribute(attr));
@@ -2191,7 +3499,7 @@ document.getElementById('infoModal').addEventListener('click', (e) => {
    LÓGICA DE RODADA
    ========================================================================== */
 function cardById(id){
-  return DECK.find(c => c.id === id);
+  return currentTheme().deck.find(c => c.id === id);
 }
 
 function chooseAttribute(attr){
@@ -2211,7 +3519,7 @@ function chooseAttribute(attr){
   });
 
   renderGame();
-  document.getElementById('turnBanner').textContent = 'Você escolheu: ' + ATTR_LABELS[attr].label;
+  document.getElementById('turnBanner').textContent = 'Você escolheu: ' + currentTheme().attrLabels[attr].label;
   maybeResolveRound();
 }
 
@@ -2298,7 +3606,7 @@ function showRoundResultMulti(attr, reveals, active, winners){
 
   const panel = document.getElementById('resultPanel');
   panel.classList.remove('hidden');
-  const meta = ATTR_LABELS[attr];
+  const meta = currentTheme().attrLabels[attr];
 
   let text;
   if(winners.length === 1){
@@ -2376,6 +3684,36 @@ document.getElementById('btnReplay').addEventListener('click', () => {
   clearSession();
   location.reload();
 });
+
+/* ==========================================================================
+   SELETOR DE TEMA (tela inicial) — só decide algo quando o jogador cria a
+   sala; ao entrar numa sala existente, o tema vem do host via roster/start.
+   ========================================================================== */
+function applyThemeChrome(){
+  const theme = currentTheme();
+  document.title = theme.title;
+  const brandEl = document.querySelector('.brand-mark');
+  if(brandEl) brandEl.textContent = theme.title;
+}
+
+function renderThemePicker(){
+  const picker = document.getElementById('themePicker');
+  picker.innerHTML = '';
+  Object.values(THEMES).forEach(theme => {
+    const opt = document.createElement('div');
+    opt.className = 'theme-option' + (theme.id === state.themeId ? ' selected' : '');
+    opt.dataset.themeId = theme.id;
+    opt.innerHTML = '<span class="theme-emoji">' + theme.emoji + '</span><span>' + theme.label + '</span>';
+    opt.addEventListener('click', () => {
+      state.themeId = theme.id;
+      applyThemeChrome();
+      renderThemePicker();
+    });
+    picker.appendChild(opt);
+  });
+}
+renderThemePicker();
+applyThemeChrome();
 
 /* ==========================================================================
    INICIALIZAÇÃO DA PÁGINA
