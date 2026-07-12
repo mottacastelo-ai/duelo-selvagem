@@ -3473,7 +3473,12 @@ function openInfoModal(card){
   });
 
   const wikiLink = document.getElementById('modalWikiLink');
-  wikiLink.href = card.wikipediaUrl;
+  if(card.wikipediaUrl){
+    wikiLink.href = card.wikipediaUrl;
+    wikiLink.classList.remove('hidden');
+  } else {
+    wikiLink.classList.add('hidden');
+  }
 
   const soundCredit = card.sound ? (' · Som: ' + card.sound.author + ' (' + card.sound.license + ')') : '';
   document.getElementById('modalCredit').textContent =
