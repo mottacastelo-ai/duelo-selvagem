@@ -2701,6 +2701,1123 @@ const THEMES = {
   }
 ]
   }
+,
+  inseto: {
+    id: 'inseto', label: 'Inseto', emoji: '🐝', title: 'Duelo Inseto',
+    attrLabels: {
+      comprimento_cm: { label: 'Comprimento', unit: 'cm' },
+      peso_g: { label: 'Peso', unit: 'g' },
+      ovos_por_postura: { label: 'Ovos por postura', unit: '' },
+      tempo_ate_adulto_dias: { label: 'Tempo até fase adulta', unit: 'dias' },
+      expectativa_vida_dias: { label: 'Expectativa de vida', unit: 'dias' }
+    },
+    attrOrder: ['comprimento_cm', 'peso_g', 'ovos_por_postura', 'tempo_ate_adulto_dias', 'expectativa_vida_dias'],
+    deck: [
+  {
+    id: 'formiga_bala',
+    name: 'Formiga-bala',
+    species: 'Paraponera clavata',
+    emoji: '🐜',
+    attrs: {
+      comprimento_cm: 2.5,
+      peso_g: 0.15,
+      ovos_por_postura: 15,
+      tempo_ate_adulto_dias: 90,
+      expectativa_vida_dias: 730
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Paraponera_clavata_MHNT.jpg',
+      author: 'Didier Descouens',
+      license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://en.wikipedia.org/wiki/Paraponera_clavata',
+    info: {
+      habitat: 'Vive em florestas tropicais úmidas de baixada, da Nicarágua ao Paraguai, nidificando na base de árvores.',
+      alimentacao: 'Onívora: coleta néctar e pequenos artrópodes e também atua como predadora/carniceira ocasional no chão da floresta.',
+      comportamento: 'Famosa pela ferroada extremamente dolorosa, considerada a mais dolorida entre insetos no índice de dor de Schmidt.',
+      conservacao: 'Não avaliada globalmente pela IUCN; populações consideradas estáveis em seu habitat de floresta tropical preservada.',
+      curiosidades: [
+        'É usada em ritual de passagem do povo Sateré-Mawé, no Brasil, em luvas trançadas com dezenas de formigas vivas.',
+        'Também é chamada de tocandira ou formiga-24-horas, por causa da dor que a ferroada pode causar por até 24 horas.',
+        'É uma das maiores formigas do mundo, com operárias podendo passar de 2,5 cm.',
+        'Pertence à subfamília Paraponerinae, da qual é a única espécie viva.',
+        'Apesar da ferroada extremamente dolorosa, não é considerada letal para humanos saudáveis.'
+      ],
+      fontes: 'Wikipedia (EN/PT), AntWiki, Fewell et al. 1996 (peso), Discover Wildlife.'
+    }
+  },
+  {
+    id: 'formiga_cortadeira',
+    name: 'Formiga-cortadeira',
+    species: 'Atta cephalotes',
+    emoji: '🐜',
+    attrs: {
+      comprimento_cm: 3,
+      peso_g: 1.2,
+      ovos_por_postura: 1000,
+      tempo_ate_adulto_dias: 50,
+      expectativa_vida_dias: 5475
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Atta_cephalotes_(Costa_Rica)_1.jpg',
+      author: 'Hans Hillewaert',
+      license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://en.wikipedia.org/wiki/Atta_cephalotes',
+    info: {
+      habitat: 'Florestas tropicais da América Central e do Sul, vivendo em colônias subterrâneas com câmaras de fungo.',
+      alimentacao: 'Cultiva um fungo (Leucoagaricus) como alimento, usando pedaços de folhas cortadas como substrato.',
+      comportamento: 'Forma "rodovias" de operárias carregando folhas até o ninho; possui castas muito polimórficas, de minims a soldados.',
+      conservacao: 'Não ameaçada; considerada praga agrícola em algumas regiões por desfolhar plantações.',
+      curiosidades: [
+        'As operárias variam de 2 mm a 16 mm de comprimento dentro da mesma colônia.',
+        'Uma colônia madura pode ter milhões de indivíduos e a rainha pode viver mais de 15 anos.',
+        'As mandíbulas dos soldados já foram usadas por povos indígenas para fechar ferimentos, como "grampos" vivos.',
+        'É conhecida no Brasil pelo nome popular saúva.',
+        'Não come as folhas diretamente — elas servem apenas de adubo para o fungo que é o verdadeiro alimento da colônia.'
+      ],
+      fontes: 'Wikipedia (EN), AntWiki, Antark; peso e ovos/dia da rainha são estimativas com base em faixas relatadas.'
+    }
+  },
+  {
+    id: 'abelha_europeia',
+    name: 'Abelha-europeia',
+    species: 'Apis mellifera',
+    emoji: '🐝',
+    attrs: {
+      comprimento_cm: 1.25,
+      peso_g: 0.09,
+      ovos_por_postura: 1500,
+      tempo_ate_adulto_dias: 21,
+      expectativa_vida_dias: 730
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Apis_mellifera_-_September_2023_-_Sarah_Stierch.jpg',
+      author: 'Sarah Stierch',
+      license: 'CC BY 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Abelha-europeia',
+    info: {
+      habitat: 'Originária da Europa, África e Oriente Médio, foi introduzida por humanos em quase todo o mundo, incluindo as Américas.',
+      alimentacao: 'Alimenta-se de néctar e pólen de flores, produzindo mel e geleia real para a colônia.',
+      comportamento: 'Vive em colônias eussociais organizadas com rainha, operárias e zangões, com dança de comunicação para indicar fontes de alimento.',
+      conservacao: 'Espécie amplamente manejada pelo homem; populações selvagens vêm sendo afetadas por pesticidas, ácaros Varroa e perda de habitat.',
+      curiosidades: [
+        'A "dança das abelhas" é usada para comunicar a direção e distância de fontes de néctar.',
+        'Uma colônia pode ter até 15 subespécies reconhecidas de Apis mellifera espalhadas pelo mundo.',
+        'Operárias vivem poucas semanas no verão, mas podem viver meses durante o inverno.',
+        'A rainha é alimentada exclusivamente com geleia real durante toda a vida.',
+        'Uma única rainha pode botar até 1500 ovos por dia na época de pico.'
+      ],
+      fontes: 'AnimalDiversity Web, BioKIDS, Wikipedia PT.'
+    }
+  },
+  {
+    id: 'mamangava',
+    name: 'Mamangava',
+    species: 'Bombus terrestris',
+    emoji: '🐝',
+    attrs: {
+      comprimento_cm: 2.1,
+      peso_g: 0.9,
+      ovos_por_postura: 8,
+      tempo_ate_adulto_dias: 28,
+      expectativa_vida_dias: 365
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Bombus_terrestris.jpg',
+      author: 'Marco Almbauer',
+      license: 'CC0 1.0'
+    },
+    sound: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Hummel_bee.ogg',
+      description: 'zumbido de mamangava em voo',
+      author: 'soerena (via PD Sounds)',
+      license: 'Domínio público'
+    },
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Mamangaba',
+    info: {
+      habitat: 'Nativa da Europa, norte da África e Ásia ocidental; introduzida em outras regiões para polinização comercial.',
+      alimentacao: 'Alimenta-se de néctar e pólen de diversas flores, sendo importante polinizadora por vibração ("buzz pollination").',
+      comportamento: 'Forma colônias anuais fundadas por uma única rainha; raramente pica, mas pode picar várias vezes quando provocada.',
+      conservacao: 'Espécie comum e amplamente usada comercialmente, mas seu uso fora da área nativa gera preocupação por competição com abelhas nativas.',
+      curiosidades: [
+        'Ao contrário da abelha-europeia, a mamangava pode picar mais de uma vez.',
+        'É uma das principais polinizadoras comerciais de estufas de tomate no mundo.',
+        'A colônia dura apenas um ano; só rainhas fecundadas sobrevivem ao inverno em hibernação.',
+        'Consegue voar em temperaturas mais baixas que a maioria das abelhas, "aquecendo" o corpo por vibração muscular.',
+        'Rainhas podem pesar mais de dez vezes o peso de uma operária pequena.'
+      ],
+      fontes: 'Wikipedia (EN), bumblebee.org, Wildlife Trusts, Animalia.bio.'
+    }
+  },
+  {
+    id: 'vespa_cacadora_tarantulas',
+    name: 'Vespa-caçadora-de-tarântulas',
+    species: 'Pepsis grossa',
+    emoji: '🐝',
+    attrs: {
+      comprimento_cm: 4,
+      peso_g: 2.5,
+      ovos_por_postura: 1,
+      tempo_ate_adulto_dias: 365,
+      expectativa_vida_dias: 45
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Pepsis_grossa_(cropped).jpg',
+      author: 'Niklas299',
+      license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Vespa-taranta',
+    info: {
+      habitat: 'Encontrada em desertos e áreas áridas das Américas, do sul dos EUA até a América do Sul.',
+      alimentacao: 'Adultos se alimentam de néctar; as larvas se alimentam da tarântula paralisada que a mãe caçou.',
+      comportamento: 'A fêmea paralisa uma tarântula com a ferroada e põe um único ovo sobre o abdômen da aranha viva paralisada.',
+      conservacao: 'Não ameaçada; populações consideradas estáveis em seu habitat desértico natural.',
+      curiosidades: [
+        'Possui uma das ferroadas mais dolorosas do mundo, avaliada com nota máxima no índice de dor de Schmidt.',
+        'A larva se alimenta da tarântula viva, mas paralisada, evitando órgãos vitais para mantê-la viva o máximo possível.',
+        'Fêmeas escolhem o sexo do ovo conforme o tamanho da aranha: aranhas maiores recebem ovos de fêmeas.',
+        'É considerada o inseto do estado do Novo México, nos Estados Unidos.',
+        'Apesar da ferroada extrema, raramente ataca humanos, preferindo fugir.'
+      ],
+      fontes: 'Wikipedia (EN), Britannica, Arizona-Sonora Desert Museum, A-Z Animals.'
+    }
+  },
+  {
+    id: 'vespa_de_papel',
+    name: 'Vespa-de-papel',
+    species: 'Polistes dominula',
+    emoji: '🐝',
+    attrs: {
+      comprimento_cm: 1.1,
+      peso_g: 0.08,
+      ovos_por_postura: 20,
+      tempo_ate_adulto_dias: 40,
+      expectativa_vida_dias: 365
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Polistes_dominula_MHNT.jpg',
+      author: 'Didier Descouens',
+      license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://en.wikipedia.org/wiki/European_paper_wasp',
+    info: {
+      habitat: 'Nativa da região do Mediterrâneo, hoje amplamente introduzida na América do Norte e outras regiões.',
+      alimentacao: 'Adultos se alimentam de néctar; larvas são alimentadas com lagartas e outros insetos mastigados pelas operárias.',
+      comportamento: 'Constrói ninhos de "papel" feito de fibra vegetal mastigada; colônias são fundadas por uma ou poucas fêmeas fecundadas.',
+      conservacao: 'Espécie comum, considerada invasora em algumas regiões fora de seu habitat nativo, como os EUA.',
+      curiosidades: [
+        'O ninho de papel é feito mastigando madeira e fibras vegetais misturadas com saliva.',
+        'É hospedeira de Polistes sulcifer, uma vespa parasita que não constrói ninho próprio.',
+        'Cada célula do ninho recebe um único ovo, preso verticalmente pela fêmea fundadora.',
+        'Fêmeas fecundadas (futuras rainhas) hibernam e podem viver quase um ano, mas operárias vivem só 30-40 dias.',
+        'Foi introduzida acidentalmente na América do Norte na década de 1970 e hoje é considerada espécie invasora lá.'
+      ],
+      fontes: 'AnimalDiversity Web, BioKIDS, Wikipedia (EN).'
+    }
+  },
+  {
+    id: 'borboleta_monarca',
+    name: 'Borboleta-monarca',
+    species: 'Danaus plexippus',
+    emoji: '🦋',
+    attrs: {
+      comprimento_cm: 3,
+      peso_g: 0.4,
+      ovos_por_postura: 400,
+      tempo_ate_adulto_dias: 32,
+      expectativa_vida_dias: 21
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Danaus_plexippus_MHNT_femelle.jpg',
+      author: 'Didier Descouens',
+      license: 'CC BY-SA 3.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Borboleta-monarca',
+    info: {
+      habitat: 'Nativa da América do Norte, migrando entre Canadá/EUA e áreas de hibernação no México e na costa da Califórnia.',
+      alimentacao: 'Lagartas se alimentam exclusivamente de plantas do gênero Asclepias (serralha-de-leite); adultos bebem néctar de várias flores.',
+      comportamento: 'Realiza a mais longa migração conhecida entre insetos, percorrendo milhares de km em várias gerações.',
+      conservacao: 'Populações em forte declínio (mais de 80% em 25 anos) por perda de habitat; listada como ameaçada em algumas avaliações.',
+      curiosidades: [
+        'A geração migratória de outono pode viver de 8 a 9 meses, muito mais que as gerações de verão (2 a 6 semanas).',
+        'As lagartas acumulam toxinas da planta hospedeira, tornando-se venenosas para predadores.',
+        'A migração para o México é feita por indivíduos que nunca estiveram lá antes — geralmente a quarta geração do ano.',
+        'Os ovos são postos individualmente, um por folha, e não em grandes grupos.',
+        'A metamorfose completa (ovo a adulto) leva cerca de 4 a 5 semanas em condições ideais.'
+      ],
+      fontes: 'Wikipedia (PT/EN), AnimalDiversity Web, LSU AgCenter, Dimensions.com, PBS Nature.'
+    }
+  },
+  {
+    id: 'mariposa_imperador',
+    name: 'Mariposa-imperador',
+    species: 'Attacus atlas',
+    emoji: '🦋',
+    attrs: {
+      comprimento_cm: 30,
+      peso_g: 26,
+      ovos_por_postura: 250,
+      tempo_ate_adulto_dias: 130,
+      expectativa_vida_dias: 10
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Attacus_atlas_qtl1.jpg',
+      author: 'Quartl',
+      license: 'CC BY-SA 3.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Attacus_atlas',
+    info: {
+      habitat: 'Florestas tropicais secas, florestas secundárias e áreas arbustivas do sul e sudeste asiático, incluindo Bornéu.',
+      alimentacao: 'Os adultos não se alimentam (boca atrofiada); vivem das reservas de gordura da fase larval. Lagartas comem folhas de cítricos, canela e goiabeira.',
+      comportamento: 'Fêmeas liberam feromônios detectados por machos a quilômetros de distância; voadores fracos, ativos à noite.',
+      conservacao: 'Não avaliada formalmente pela IUCN, mas estudos indicam que atenderia aos critérios de espécie "ameaçada".',
+      curiosidades: [
+        'É uma das maiores mariposas do mundo em área de asa (~160 cm²).',
+        'As pontas das asas se assemelham à cabeça de uma cobra, um mecanismo de defesa contra predadores.',
+        'O nome "atlas" vem da aparência das asas, que lembram mapas.',
+        'Na China e Taiwan, os casulos vazios já foram usados como bolsas.',
+        'Os adultos vivem tão pouco tempo justamente porque não têm aparelho bucal funcional.'
+      ],
+      fontes: 'Wikipedia (EN/PT) "Attacus atlas"; Animal Diversity Web, breedingbutterflies.com, timetobreed.com.'
+    }
+  },
+  {
+    id: 'mariposa_caveira',
+    name: 'Mariposa-caveira',
+    species: 'Acherontia atropos',
+    emoji: '🦋',
+    attrs: {
+      comprimento_cm: 10,
+      peso_g: 2,
+      ovos_por_postura: 100,
+      tempo_ate_adulto_dias: 55,
+      expectativa_vida_dias: 90
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Acherontia_atropos_MHNT_dos.jpg',
+      author: 'Didier Descouens',
+      license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://en.wikipedia.org/wiki/Death%27s-head_hawkmoth',
+    info: {
+      habitat: 'Nativa da África e sul da Europa; ocorre no Oriente Médio, região do Mediterrâneo e Índia, migrando sazonalmente até a Grã-Bretanha.',
+      alimentacao: 'Larvas se alimentam principalmente de solanáceas (batata, physalis); adultos por vezes invadem colmeias para roubar mel.',
+      comportamento: 'Produz um som de "guincho" característico pela faringe quando perturbada.',
+      conservacao: 'Sem avaliação formal de risco; espécie amplamente distribuída e migrante.',
+      curiosidades: [
+        'Tem no dorso um desenho que lembra uma caveira humana, dando origem ao nome popular.',
+        'É capaz de emitir sons audíveis, algo raro entre mariposas.',
+        'Consegue invadir colmeias de abelhas para se alimentar de mel.',
+        'Foi popularizada no cinema (ex.: "O Silêncio dos Inocentes").',
+        'Consegue voar por longas distâncias durante migrações sazonais até o norte da Europa.'
+      ],
+      fontes: `Wikipedia (EN) "Death's-head hawkmoth"; bugbrief.com, breedingbutterflies.com, timetobreed.com.`
+    }
+  },
+  {
+    id: 'mariposa_lua',
+    name: 'Mariposa-lua',
+    species: 'Actias luna',
+    emoji: '🌙',
+    attrs: {
+      comprimento_cm: 9.5,
+      peso_g: 2.2,
+      ovos_por_postura: 300,
+      tempo_ate_adulto_dias: 63,
+      expectativa_vida_dias: 8
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Actias_luna_male_sjh.JPG',
+      author: 'Shawn Hanrahan',
+      license: 'CC BY-SA 2.5'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Actias_luna',
+    info: {
+      habitat: 'América do Norte, a leste das Grandes Planícies dos EUA (da Flórida ao Maine) e de Saskatchewan até Nova Escócia no Canadá.',
+      alimentacao: 'Adultos têm boca vestigial e não se alimentam. Lagartas comem folhas de nogueira, hickory, sweetgum e bétula.',
+      comportamento: 'As "caudas" das asas traseiras servem de alvo falso contra a ecolocalização de morcegos.',
+      conservacao: 'Classificada como "Segura" pela NatureServe.',
+      curiosidades: [
+        'As asas traseiras têm longas "caudas" que confundem o sonar dos morcegos predadores.',
+        'É uma das mariposas mais conhecidas da América do Norte pela cor verde-clara.',
+        'Vive apenas cerca de uma semana na fase adulta, tempo suficiente só para acasalar.',
+        'A lagarta passa por cinco estágios (ínstares) antes de formar o casulo.',
+        'O nome "luna" faz referência às marcas em formato de lua nas asas.'
+      ],
+      fontes: 'Wikipedia (EN/PT) "Actias luna"; a-z-animals.com.'
+    }
+  },
+  {
+    id: 'libelula_imperador',
+    name: 'Libélula-imperador',
+    species: 'Anax imperator',
+    emoji: '🐉',
+    attrs: {
+      comprimento_cm: 7.8,
+      peso_g: 1.2,
+      ovos_por_postura: 500,
+      tempo_ate_adulto_dias: 400,
+      expectativa_vida_dias: 42
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Emperor_dragonfly_(Anax_imperator)_female.JPG',
+      author: 'Charles J. Sharp',
+      license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://en.wikipedia.org/wiki/Emperor_(dragonfly)',
+    info: {
+      habitat: 'África e a maior parte da Europa, Península Arábica e sudoeste/centro da Ásia.',
+      alimentacao: 'Caça borboletas, outras libélulas e girinos, comendo presas menores em pleno voo.',
+      comportamento: 'Machos são altamente territoriais e difíceis de se aproximar; voam alto em busca de presas.',
+      conservacao: 'Classificada como "Pouco Preocupante" pela IUCN, com população estável e ampla distribuição.',
+      curiosidades: [
+        'É uma das maiores libélulas da Europa.',
+        'As náiades (larvas aquáticas) podem levar até dois anos para completar o desenvolvimento.',
+        'Machos patrulham territórios sobre a água e afugentam rivais em voo.',
+        'Consegue comer presas capturadas enquanto ainda está voando.',
+        'Sua distribuição está se expandindo para o norte da Europa, possivelmente ligada a mudanças climáticas.'
+      ],
+      fontes: 'Wikipedia (EN) "Emperor (dragonfly)"; first-nature.com, entomologist.net. Peso e nº de ovos são estimativas.'
+    }
+  },
+  {
+    id: 'louva_a_deus_europeu',
+    name: 'Louva-a-deus-europeu',
+    species: 'Mantis religiosa',
+    emoji: '🦗',
+    attrs: {
+      comprimento_cm: 7,
+      peso_g: 4.5,
+      ovos_por_postura: 150,
+      tempo_ate_adulto_dias: 79,
+      expectativa_vida_dias: 180
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/European_praying_mantis_(Mantis_religiosa)_green_female_Dobruja.jpg',
+      author: 'Charles J. Sharp',
+      license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://en.wikipedia.org/wiki/European_mantis',
+    info: {
+      habitat: 'Europa, Ásia, África e América do Norte (espécie introduzida); expandindo para o norte.',
+      alimentacao: 'Predador carnívoro de emboscada; captura gafanhotos, grilos e baratas, consumindo apenas presas vivas.',
+      comportamento: 'Canibalismo sexual ocorre em 24-31% dos acasalamentos naturais.',
+      conservacao: 'Classificada como "Pouco Preocupante" pela IUCN globalmente; é o inseto oficial do estado de Connecticut (EUA).',
+      curiosidades: [
+        'A fêmea pode devorar o macho durante ou após o acasalamento (canibalismo sexual).',
+        'É capaz de girar a cabeça quase 180 graus, algo raro entre insetos.',
+        'Suas patas dianteiras em forma de "garras" capturam presas em frações de segundo.',
+        'A cópula pode durar de 4 a 5 horas.',
+        'Foi introduzida na América do Norte no século XIX e hoje é encontrada amplamente no continente.'
+      ],
+      fontes: 'Wikipedia (EN) "European mantis"; estudo ResearchGate sobre ciclo de vida e canibalismo.'
+    }
+  },
+  {
+    id: 'gafanhoto_migratorio',
+    name: 'Gafanhoto-migratório',
+    species: 'Locusta migratoria',
+    emoji: '🦗',
+    attrs: {
+      comprimento_cm: 5,
+      peso_g: 2,
+      ovos_por_postura: 70,
+      tempo_ate_adulto_dias: 45,
+      expectativa_vida_dias: 60
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Locusta-migratoria-wanderheuschrecke.jpg',
+      author: 'Holger Krisp',
+      license: 'CC BY 3.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Gafanhoto-migrat%C3%B3rio',
+    info: {
+      habitat: 'Ocorre em toda a África, Europa, Ásia, Austrália e Nova Zelândia.',
+      alimentacao: 'Herbívoro; um adulto pode consumir seu próprio peso corporal em alimento fresco por dia.',
+      comportamento: 'Apresenta polifenismo, alternando entre fases solitária e gregária conforme a densidade populacional.',
+      conservacao: 'Classificada como "Pouco Preocupante" pela IUCN, apesar de ser uma das principais pragas agrícolas do mundo.',
+      curiosidades: [
+        'Na fase gregária, forma enxames massivos que podem devastar plantações inteiras.',
+        'Possui um dos maiores genomas conhecidos entre insetos, com 6,5 bilhões de pares de bases.',
+        'A mudança de comportamento solitário para gregário é desencadeada por contato físico repetido com outros indivíduos.',
+        'Um enxame pode viajar mais de 100 km em um único dia.',
+        'É consumido como alimento (entomofagia) em diversas culturas da África e Ásia.'
+      ],
+      fontes: 'Wikipedia (EN/PT) "Locusta migratoria"; HopperWiki. Peso corporal é estimativa.'
+    }
+  },
+  {
+    id: 'grilo_domestico',
+    name: 'Grilo-doméstico',
+    species: 'Acheta domesticus',
+    emoji: '🦗',
+    attrs: {
+      comprimento_cm: 1.8,
+      peso_g: 0.4,
+      ovos_por_postura: 75,
+      tempo_ate_adulto_dias: 75,
+      expectativa_vida_dias: 35
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Acheta_domesticus_1.JPG',
+      author: 'Aiwok',
+      license: 'CC BY-SA 3.0'
+    },
+    sound: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Acheta-domesticus-Stridulation.ogg',
+      description: 'canto por estridulação do grilo-doméstico macho',
+      author: 'Morray (de.wikipedia)',
+      license: 'CC BY 3.0'
+    },
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Grilo-dom%C3%A9stico',
+    info: {
+      habitat: 'Provavelmente nativo do sudoeste asiático; hoje espalhado pelo mundo, criado como alimento vivo.',
+      alimentacao: 'Onívoro; na natureza come flores, folhas, frutas, gramíneas e outros insetos.',
+      comportamento: 'Machos produzem o característico canto por estridulação (fricção das asas).',
+      conservacao: 'Sem avaliação de risco; população comercial foi bastante afetada pelo vírus da paralisia do grilo.',
+      curiosidades: [
+        'É o grilo mais criado comercialmente no mundo como alimento vivo para répteis.',
+        'O som do canto é produzido esfregando as asas dianteiras uma na outra (estridulação).',
+        'Uma fêmea pode pôr até cerca de 3.000 ovos ao longo da vida adulta.',
+        'Foi quase eliminado da indústria de criação por um vírus (AdDNV) na década de 2000-2010.',
+        'É comestível para humanos e cada vez mais usado como fonte de proteína alternativa.'
+      ],
+      fontes: 'Wikipedia (EN/PT) "Acheta domesticus"; ScienceDirect (life-tables), Big Cricket Solutions.'
+    }
+  },
+  {
+    id: 'cigarra_periodica',
+    name: 'Cigarra-periódica',
+    species: 'Magicicada septendecim',
+    emoji: '🦗',
+    attrs: {
+      comprimento_cm: 3.2,
+      peso_g: 0.2,
+      ovos_por_postura: 500,
+      tempo_ate_adulto_dias: 6205,
+      expectativa_vida_dias: 28
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Magicicada_septendecim-female_ventral.jpg',
+      author: 'Peter Chen (peterwchen)',
+      license: 'CC BY 4.0'
+    },
+    sound: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Calling_song_of_Magicicada_septendecim_-_pone.0000892.s001.oga',
+      description: 'canto de chamado da cigarra-periódica macho',
+      author: 'Fontaine K, Cooley J, Simon C',
+      license: 'CC BY 2.5'
+    },
+    wikipediaUrl: 'https://en.wikipedia.org/wiki/Magicicada_septendecim',
+    info: {
+      habitat: 'Nativa do leste da América do Norte (Canadá e EUA), vive a maior parte da vida como ninfa subterrânea.',
+      alimentacao: 'Ninfas sugam seiva de raízes de árvores; adultos se alimentam de seiva de galhos e troncos.',
+      comportamento: 'É a maior e mais setentrional das cigarras periódicas de 17 anos; machos produzem cantos altos em coro.',
+      conservacao: 'Não ameaçada globalmente, mas classificada como "quase ameaçada" em partes de sua distribuição.',
+      curiosidades: [
+        'Passa 17 anos como ninfa debaixo da terra antes de emergir.',
+        'Emerge em grandes "broods" (ninhadas) sincronizadas por região.',
+        'A fêmea corta fendas em galhos com o ovipositor para depositar os ovos.',
+        'Machos têm órgãos chamados timbais que produzem um dos cantos mais altos entre os insetos.',
+        'Depois de acasalar, os adultos morrem em poucas semanas, completando o ciclo.'
+      ],
+      fontes: 'Wikipedia (EN/PT), Animal Diversity Web, University of Connecticut Periodical Cicada Information Pages, Britannica. Peso é estimativa.'
+    }
+  },
+  {
+    id: 'barata_americana',
+    name: 'Barata-americana',
+    species: 'Periplaneta americana',
+    emoji: '🪳',
+    attrs: {
+      comprimento_cm: 4,
+      peso_g: 0.11,
+      ovos_por_postura: 15,
+      tempo_ate_adulto_dias: 600,
+      expectativa_vida_dias: 440
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Periplaneta_americana_2013.jpg',
+      author: 'Sputniktilt',
+      license: 'CC BY-SA 3.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Barata-americana',
+    info: {
+      habitat: 'Espécie cosmopolita, originária da África e Oriente Médio; comum em esgotos, porões e áreas urbanas úmidas.',
+      alimentacao: 'Onívora e detritívora: come praticamente qualquer matéria orgânica, incluindo restos de comida e papel.',
+      comportamento: 'Ativa à noite, prefere ambientes quentes e úmidos; um dos insetos mais rápidos, até 5,4 km/h.',
+      conservacao: 'Não ameaçada; considerada praga urbana amplamente distribuída pelo mundo.',
+      curiosidades: [
+        'Apesar do nome, é originária da África, não da América.',
+        'Fêmeas produzem em média 9-10 ootecas ao longo da vida.',
+        'Tem um dos maiores genomas de inseto já sequenciados, com 522 receptores de gosto.',
+        'Ninfas conseguem regenerar membros perdidos.',
+        'Olhos compostos com mais de 3.500 lentes individuais, dando boa visão noturna.'
+      ],
+      fontes: 'Wikipedia (EN/PT), UF/IFAS EENY141, Animal Diversity Web, A-Z Animals.'
+    }
+  },
+  {
+    id: 'cupim_subterraneo',
+    name: 'Cupim-subterrâneo (rainha)',
+    species: 'Reticulitermes flavipes',
+    emoji: '🐜',
+    attrs: {
+      comprimento_cm: 1,
+      peso_g: 0.018,
+      ovos_por_postura: 6000,
+      tempo_ate_adulto_dias: 365,
+      expectativa_vida_dias: 7300
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Reticulitermes_flavipes_K8085-6.jpg',
+      author: 'USDA Agricultural Research Service',
+      license: 'Domínio público'
+    },
+    sound: null,
+    wikipediaUrl: 'https://en.wikipedia.org/wiki/Reticulitermes_flavipes',
+    info: {
+      habitat: 'Originário do leste da América do Norte, hoje também estabelecido em partes da Europa e América do Sul.',
+      alimentacao: 'A rainha não se alimenta diretamente — recebe comida regurgitada das operárias; a colônia se alimenta de celulose.',
+      comportamento: 'Colônias maduras variam de 20 mil a 5 milhões de operárias; o "rei" permanece parceiro permanente da rainha.',
+      conservacao: 'Não ameaçada; é a espécie de cupim mais importante economicamente nos EUA por causar danos a estruturas de madeira.',
+      curiosidades: [
+        'A rainha pode viver várias décadas, uma das vidas mais longas entre os insetos.',
+        'Ao contrário de formigas e abelhas, o "rei" cupim permanece vivo como parceiro permanente da rainha.',
+        'A imagem usada mostra um soldado da espécie (foto de rainha com licença aberta não foi localizada).',
+        'A colônia pode abrigar milhões de indivíduos interligados por túneis subterrâneos.',
+        'É responsável por boa parte dos gastos anuais dos EUA em controle de cupins.'
+      ],
+      fontes: 'Wikipedia (EN), NC State Extension, Pest Management Professional. Postura da rainha (ovos_por_postura) reflete estimativa de produção anual (5.000-10.000/ano), não uma desova única; peso é de estudo científico (~9,3 mg em rainha jovem, valor arredondado). Números virais sobre rainhas de 9 cm e 30.000 ovos/dia são de outras espécies de cupim (Macrotermes) e não foram usados.'
+    }
+  },
+  {
+    id: 'bicho_pau_gigante',
+    name: 'Bicho-pau-gigante',
+    species: 'Phobaeticus chani',
+    emoji: '🌿',
+    attrs: {
+      comprimento_cm: 35.7,
+      peso_g: 15,
+      ovos_por_postura: 1,
+      tempo_ate_adulto_dias: 365,
+      expectativa_vida_dias: 365
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Phobaeticus_chani_Bragg,_2008;_Holotype_Female_dorsal_view.jpg',
+      author: 'WildManOfBorneo',
+      license: 'CC BY-SA 3.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Phobaeticus_chani',
+    info: {
+      habitat: 'Endêmico das florestas tropicais úmidas de Sabah, em Bornéu (Malásia); acredita-se que viva no dossel florestal.',
+      alimentacao: 'Como outros bichos-pau, alimenta-se de folhas de árvores e arbustos da floresta tropical.',
+      comportamento: 'Camuflagem extrema, imitando um graveto; pouquíssimo observado na natureza devido ao hábito de viver no alto do dossel.',
+      conservacao: 'Dados insuficientes; apenas 6 espécimes são conhecidos pela ciência, todos de Sabah.',
+      curiosidades: [
+        'Detém o recorde do Guinness de inseto mais comprido do mundo (57 cm com as pernas estendidas).',
+        'Foi batizado em homenagem ao naturalista malaio Datuk Chan Chew Lun.',
+        'Foi eleito uma das "10 Novas Espécies do Ano" pelo International Institute for Species Exploration em 2008.',
+        'Os ovos possuem "asas" que ajudam a dispersá-los pelo vento ao caírem da copa das árvores.',
+        'É tão raro que apenas seis espécimes são conhecidos pela ciência.'
+      ],
+      fontes: 'Wikipedia (EN/PT), Guinness World Records, Phasmid Study Group, Mongabay. Peso, ovos por postura e tempo até adulto não têm dado publicado exato para a espécie — usadas estimativas baseadas em Phasmatodea de porte grande.'
+    }
+  },
+  {
+    id: 'joaninha_sete_pontos',
+    name: 'Joaninha-de-sete-pontos',
+    species: 'Coccinella septempunctata',
+    emoji: '🐞',
+    attrs: {
+      comprimento_cm: 0.7,
+      peso_g: 0.02,
+      ovos_por_postura: 20,
+      tempo_ate_adulto_dias: 30,
+      expectativa_vida_dias: 365
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Coccinella_septempunctata_Kaldari.jpg',
+      author: 'Kaldari',
+      license: 'Domínio público'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Coccinella_septempunctata',
+    info: {
+      habitat: 'Nativa da Europa e Ásia; hoje também presente no Oriente Médio, Índia e América do Norte (introduzida).',
+      alimentacao: 'Principalmente pulgões e cochonilhas (larvas e adultos são predadoras); adultos também consomem pólen.',
+      comportamento: 'Forma agregações de hibernação com cerca de 10-15 indivíduos, já documentados grupos com mais de 200.',
+      conservacao: 'Sem status de conservação especial; em várias regiões é considerada espécie invasora, competindo com joaninhas nativas.',
+      curiosidades: [
+        'O nome científico vem do latim "sete pontos", referindo-se às sete manchas negras nas élitros vermelhas.',
+        'É considerada espécie emblemática do controle biológico de pragas agrícolas.',
+        'Foi introduzida deliberadamente na América do Norte para controle de pulgões e hoje é invasora lá.',
+        'Adultos podem exsudar um líquido amarelo de odor forte pelas articulações das pernas como defesa.',
+        'Uma única larva pode comer centenas de pulgões durante seu desenvolvimento.'
+      ],
+      fontes: 'Wikipedia (EN/PT), Animal Diversity Web, BioKIDS, CABI Compendium. Peso é estimativa.'
+    }
+  },
+  {
+    id: 'vaga_lume',
+    name: 'Vaga-lume',
+    species: 'Photinus pyralis',
+    emoji: '✨',
+    attrs: {
+      comprimento_cm: 1.2,
+      peso_g: 0.02,
+      ovos_por_postura: 500,
+      tempo_ate_adulto_dias: 400,
+      expectativa_vida_dias: 20
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Photinus_pyralis_Firefly_3.jpg',
+      author: 'art farmer',
+      license: 'CC BY-SA 2.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://en.wikipedia.org/wiki/Photinus_pyralis',
+    info: {
+      habitat: 'Encontrado em todo o leste dos Estados Unidos, em campos, gramados e bordas de floresta.',
+      alimentacao: 'Adultos e larvas são carnívoros, comendo outros insetos, minhocas e caramujos.',
+      comportamento: 'Machos emitem um flash de 0,3s a cada 5,5s em voo em padrão de "J" para atrair fêmeas.',
+      conservacao: 'Sem status especial de proteção, mas populações de vaga-lumes vêm diminuindo globalmente.',
+      curiosidades: [
+        'É a espécie de vaga-lume mais comum da América do Norte.',
+        'Conhecido também como "big dipper firefly" pelo padrão de voo em curva do macho.',
+        'A enzima luciferase, descoberta nesta espécie, é amplamente usada em pesquisa biomédica.',
+        'As larvas passam até 2 anos se desenvolvendo no solo antes de virarem adultas.',
+        'Larvas também são bioluminescentes e por isso são chamadas de "glowworms".'
+      ],
+      fontes: 'Wikipedia (EN), Animal Diversity Web, LSU AgCenter, AMNH Ology. Peso é estimativa.'
+    }
+  },
+  {
+    id: 'besouro_rola_bosta',
+    name: 'Besouro-rola-bosta',
+    species: 'Scarabaeus sacer',
+    emoji: '🪲',
+    attrs: {
+      comprimento_cm: 3.2,
+      peso_g: 1.5,
+      ovos_por_postura: 1,
+      tempo_ate_adulto_dias: 90,
+      expectativa_vida_dias: 730
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Scarabaeus.sacer.jpg',
+      author: 'Sarefo',
+      license: 'CC BY-SA 3.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Scarabaeus_sacer',
+    info: {
+      habitat: 'Vive na região do Mediterrâneo, incluindo sul da Europa, norte da África e partes do Oriente Médio.',
+      alimentacao: 'Alimenta-se de fezes de grandes mamíferos herbívoros, moldando bolas de esterco que rola até seu ninho.',
+      comportamento: 'Forma e rola bolas de esterco para alimentação e para depositar os ovos; era venerado no Egito Antigo.',
+      conservacao: 'Sem avaliação formal pela IUCN; considerado em declínio em partes de sua área por intensificação agrícola.',
+      curiosidades: [
+        'É a espécie-tipo do gênero Scarabaeus e da família Scarabaeidae.',
+        'Foi venerado pelos antigos egípcios como símbolo de renovação e do sol nascente.',
+        'Rola bolas de esterco em linha reta usando a posição do sol e da luz polarizada para se orientar.',
+        'Uma fêmea produz apenas cerca de meia dúzia de descendentes ao longo de toda a vida.',
+        'Vive principalmente em áreas costeiras associadas a pastagens de grandes herbívoros.'
+      ],
+      fontes: 'Wikipedia (EN), Dimensions.com, A-Z Animals, Britannica. Peso e tempo até adulto são estimativas.'
+    }
+  },
+  {
+    id: 'besouro_hercules',
+    name: 'Besouro-hércules',
+    species: 'Dynastes hercules',
+    emoji: '🪲',
+    attrs: {
+      comprimento_cm: 15,
+      peso_g: 34,
+      ovos_por_postura: 20,
+      tempo_ate_adulto_dias: 730,
+      expectativa_vida_dias: 300
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Dynastes_hercules_(female).jpg',
+      author: 'Hans Hillewaert',
+      license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Dynastes_hercules',
+    info: {
+      habitat: 'Encontrado nas florestas tropicais da América Central e do Sul, incluindo Andes e Caribe.',
+      alimentacao: 'Adultos alimentam-se de frutas maduras e caídas; larvas se alimentam de madeira em decomposição.',
+      comportamento: 'Machos possuem dois longos chifres usados em combates por acesso a fêmeas e locais de alimentação.',
+      conservacao: 'Não avaliado globalmente pela IUCN; alvo de coleta e comércio para criadores de besouros.',
+      curiosidades: [
+        'É considerado o besouro mais comprido do mundo, podendo ultrapassar 17 cm com o chifre.',
+        'Consegue carregar até 850 vezes o próprio peso, uma das maiores proporções força/peso do reino animal.',
+        'A larva pode pesar mais de 100 g, mais pesada que o próprio adulto.',
+        'O nome "hércules" faz referência à força mitológica do herói grego.',
+        'É muito popular na criação em cativeiro por colecionadores e entusiastas de besouros.'
+      ],
+      fontes: 'Wikipedia (EN), Animal Diversity Web, A-Z Animals, UWI (PDF).'
+    }
+  },
+  {
+    id: 'besouro_golias',
+    name: 'Besouro-golias',
+    species: 'Goliathus goliatus',
+    emoji: '🪲',
+    attrs: {
+      comprimento_cm: 10,
+      peso_g: 50,
+      ovos_por_postura: 12,
+      tempo_ate_adulto_dias: 1460,
+      expectativa_vida_dias: 90
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Goliathus_goliatus.JPG',
+      author: 'Anaxibia',
+      license: 'CC BY-SA 3.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Goliathus_goliatus',
+    info: {
+      habitat: 'Vive nas florestas tropicais e savanas da África Central e Ocidental, como Camarões e RD Congo.',
+      alimentacao: 'Adultos se alimentam de seiva de árvores e frutas maduras; larvas alimentam-se de matéria orgânica em decomposição.',
+      comportamento: 'É um dos besouros mais pesados do mundo; voa surpreendentemente bem apesar do grande porte.',
+      conservacao: 'Não avaliado formalmente pela IUCN; bastante procurado no comércio de besouros vivos para colecionadores.',
+      curiosidades: [
+        'É um dos besouros mais pesados do planeta, podendo pesar tanto quanto um camundongo adulto.',
+        'A larva pode crescer até 25 cm de comprimento, maior que muitos adultos de outras espécies.',
+        'O padrão branco e preto do tórax funciona como camuflagem contra predadores.',
+        'Pertence à subfamília Cetoniinae, os "besouros-flor".',
+        'O ciclo de vida completo, do ovo ao adulto, pode levar até 5 anos.'
+      ],
+      fontes: 'Wikipedia (EN), A-Z Animals, blog.entomologist.net, PMC. Peso, ovos por postura e tempo até adulto incluem estimativas.'
+    }
+  },
+  {
+    id: 'besouro_veado_europeu',
+    name: 'Besouro-veado-europeu',
+    species: 'Lucanus cervus',
+    emoji: '🪲',
+    attrs: {
+      comprimento_cm: 6.5,
+      peso_g: 10,
+      ovos_por_postura: 21,
+      tempo_ate_adulto_dias: 1460,
+      expectativa_vida_dias: 45
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Lucanus_cervus_akbesianus_30g.JPG',
+      author: 'Bugman95',
+      license: 'CC BY-SA 3.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Lucanus_cervus',
+    info: {
+      habitat: 'Distribuído pela Europa, mais comum no sul e centro do continente; vive em florestas antigas com madeira morta.',
+      alimentacao: 'Adultos alimentam-se principalmente de seiva de árvores e néctar; larvas se desenvolvem em madeira morta e apodrecida.',
+      comportamento: 'Machos usam suas grandes mandíbulas em forma de chifre de veado para lutar por fêmeas.',
+      conservacao: 'Classificado como quase ameaçado em partes da Europa; em declínio devido à perda de habitat de madeira morta.',
+      curiosidades: [
+        'É o maior besouro terrestre nativo da Europa.',
+        'As mandíbulas do macho podem representar até 20% do peso total do corpo.',
+        'A fase larval pode durar de 3 a 7 anos, muito mais longa que a vida adulta.',
+        'O nome "cervus" vem do latim "veado", em referência às mandíbulas semelhantes a chifres.',
+        'Está protegido por lei em vários países europeus, incluindo o Reino Unido.'
+      ],
+      fontes: 'Wikipedia (EN), Woodland Trust, Maria Fremlin (life cycle research). Peso do adulto é estimativa.'
+    }
+  },
+  {
+    id: 'besouro_tigre',
+    name: 'Besouro-tigre',
+    species: 'Cicindela campestris',
+    emoji: '🪲',
+    attrs: {
+      comprimento_cm: 1.3,
+      peso_g: 0.05,
+      ovos_por_postura: 1,
+      tempo_ate_adulto_dias: 365,
+      expectativa_vida_dias: 365
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Green_tiger_beetle_(Cicindela_campestris)_Sweden.jpg',
+      author: 'Charles J. Sharp',
+      license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Cicindela_campestris',
+    info: {
+      habitat: 'Encontrado em toda a Europa em habitats secos e arenosos, como charnecas, dunas e trilhas com solo exposto.',
+      alimentacao: 'É um predador voraz que caça formigas, lagartas e outros pequenos invertebrados.',
+      comportamento: 'Adultos são extremamente rápidos e ágeis; larvas ficam à espreita em tocas verticais no solo.',
+      conservacao: 'Não é considerado globalmente ameaçado, mas está em declínio em algumas regiões por perda de habitat.',
+      curiosidades: [
+        'É um dos besouros mais rápidos do mundo em relação ao tamanho do corpo.',
+        'Suas larvas caçam de dentro de tocas verticais no solo, agarrando presas que passam por perto.',
+        'A cor verde metálica com pintas claras funciona como camuflagem entre a vegetação.',
+        'As larvas podem ser parasitadas pela vespa solitária Methoca ichneumonoides.',
+        'É um indicador ecológico de solos arenosos bem preservados.'
+      ],
+      fontes: 'Wikipedia (EN/PT), Buglife, entomologist.net, Purdue Vegetable Crops Hotline. Peso é estimativa.'
+    }
+  },
+  {
+    id: 'besouro_titan',
+    name: 'Besouro-titã',
+    species: 'Titanus giganteus',
+    emoji: '🪲',
+    attrs: {
+      comprimento_cm: 15,
+      peso_g: 37.5,
+      ovos_por_postura: 1,
+      tempo_ate_adulto_dias: 730,
+      expectativa_vida_dias: 14
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Titanus_giganteus_MHNT.jpg',
+      author: 'Didier Descouens',
+      license: 'CC BY-SA 4.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Titanus_giganteus',
+    info: {
+      habitat: 'Vive nas florestas tropicais da bacia amazônica, na América do Sul, incluindo Brasil, Peru e Colômbia.',
+      alimentacao: 'A alimentação do adulto é pouco conhecida; a larva nunca foi encontrada na natureza.',
+      comportamento: 'Pode emitir um forte som de estridulação ao ser ameaçado; mandíbulas fortes o bastante para partir um lápis.',
+      conservacao: 'Não avaliado formalmente pela IUCN; dados populacionais são escassos devido à raridade dos avistamentos.',
+      curiosidades: [
+        'É um dos maiores besouros do mundo em comprimento corporal, podendo chegar a quase 17 cm.',
+        'Sua larva nunca foi documentada cientificamente na natureza.',
+        'Suas mandíbulas são fortes o suficiente para cortar um lápis de madeira ao meio.',
+        'É atraído por luzes artificiais à noite, forma mais comum de avistamento por pesquisadores.',
+        'Pertence à família Cerambycidae, os besouros-serra-pau (longicórneos).'
+      ],
+      fontes: 'Wikipedia (EN/PT), Dimensions.com, PMC "First Comprehensive Study of a Giant among the Insects", A-Z Animals. Ovos por postura e tempo até adulto não documentados; usadas estimativas.'
+    }
+  },
+  {
+    id: 'mosca_domestica',
+    name: 'Mosca-doméstica',
+    species: 'Musca domestica',
+    emoji: '🪰',
+    attrs: {
+      comprimento_cm: 0.7,
+      peso_g: 0.015,
+      ovos_por_postura: 120,
+      tempo_ate_adulto_dias: 10,
+      expectativa_vida_dias: 21
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Common_house_fly,_Musca_domestica.jpg',
+      author: 'Stephen Ausmus (USDA-ARS)',
+      license: 'CC BY 2.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Musca_domestica',
+    info: {
+      habitat: 'Presente em quase todo o mundo, associada a ambientes humanos: casas, currais, lixões e áreas com matéria orgânica.',
+      alimentacao: 'Alimenta-se de matéria orgânica em decomposição, fezes e restos de alimentos, digerindo externamente com saliva.',
+      comportamento: 'Voa em padrões erráticos; é um dos principais vetores mecânicos de bactérias entre lixo e alimentos.',
+      conservacao: 'Não avaliada pela IUCN; espécie extremamente comum e abundante em todo o planeta.',
+      curiosidades: [
+        'Consegue pousar de cabeça para baixo no teto graças a garras e almofadas adesivas nas patas.',
+        'Bate as asas cerca de 190 vezes por segundo.',
+        'Enxerga o mundo em câmera lenta, com percepção visual muito mais rápida que a humana.',
+        'Não tem dentes: regurgita enzimas digestivas sobre o alimento antes de sugá-lo.',
+        'Uma fêmea pode gerar centenas de descendentes em poucas semanas.'
+      ],
+      fontes: 'Wikipedia PT, LSU AgCenter, UNH Extension, A-Z Animals. Peso é estimativa.'
+    }
+  },
+  {
+    id: 'mosquito_dengue',
+    name: 'Mosquito-da-dengue',
+    species: 'Aedes aegypti',
+    emoji: '🦟',
+    attrs: {
+      comprimento_cm: 0.5,
+      peso_g: 0.001,
+      ovos_por_postura: 150,
+      tempo_ate_adulto_dias: 10,
+      expectativa_vida_dias: 21
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Aedes_aegypti.jpg',
+      author: 'Muhammad Mahdi Karim',
+      license: 'GFDL 1.2'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Aedes_aegypti',
+    info: {
+      habitat: 'Originário da África, hoje distribuído em regiões tropicais e subtropicais do mundo, em ambientes urbanos com água parada.',
+      alimentacao: 'Fêmeas se alimentam de sangue de humanos e outros vertebrados para desenvolver os ovos; machos se alimentam de néctar.',
+      comportamento: 'Pica preferencialmente durante o dia; é o principal vetor da dengue, zika, chikungunya e febre amarela urbana.',
+      conservacao: 'Não avaliado pela IUCN; espécie invasora e extremamente disseminada, alvo de programas de controle por ser vetor de doenças.',
+      curiosidades: [
+        'As pernas listradas em branco e preto ajudam a diferenciá-lo de outros mosquitos.',
+        'Consegue se reproduzir em pouquíssima água parada, como uma tampinha de garrafa.',
+        'É atraído por dióxido de carbono, calor corporal e certos odores da pele.',
+        'Uma única fêmea pode picar várias pessoas em uma única refeição de sangue.',
+        'Os ovos resistem à dessecação e podem "sobreviver" meses até encontrar água.'
+      ],
+      fontes: 'CDC, Wikipedia PT, PMC/MDPI, PLOS Computational Biology. Peso é estimativa.'
+    }
+  },
+  {
+    id: 'efemera_comum',
+    name: 'Efêmera-comum',
+    species: 'Ephemera danica',
+    emoji: '🦋',
+    attrs: {
+      comprimento_cm: 2,
+      peso_g: 0.002,
+      ovos_por_postura: 4000,
+      tempo_ate_adulto_dias: 545,
+      expectativa_vida_dias: 1
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Ephemeridae_-_Ephemera_danica.JPG',
+      author: 'Hectonichus',
+      license: 'CC BY-SA 3.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Ephemera_danica',
+    info: {
+      habitat: 'Rios e lagos de água limpa e bem oxigenada na Europa; as ninfas vivem enterradas no leito arenoso ou lamacento.',
+      alimentacao: 'As ninfas filtram partículas orgânicas e algas da água; os adultos não se alimentam.',
+      comportamento: 'Os adultos emergem em massa, voam em enxames nupciais e morrem logo após o acasalamento e a postura dos ovos.',
+      conservacao: 'Não avaliada globalmente pela IUCN; sensível à poluição da água, usada como bioindicador de qualidade ambiental.',
+      curiosidades: [
+        'É a única ordem de insetos que muda de pele depois de já ter asas funcionais (fase subimago).',
+        'Os adultos não têm boca funcional — vivem só o tempo de acasalar.',
+        "As ninfas podem passar até três anos debaixo d'água antes de emergir.",
+        'Os enxames de efêmeras emergindo ao mesmo tempo podem ser tão densos que aparecem em radares meteorológicos.',
+        'O nome "Ephemeroptera" vem do grego e significa "asa que dura um dia".'
+      ],
+      fontes: 'Wikipedia PT, First Nature, PMC. Número de ovos e peso são estimativas de literatura sobre o gênero.'
+    }
+  },
+  {
+    id: 'percevejo_agua_gigante',
+    name: "Percevejo-d'água-gigante",
+    species: 'Lethocerus americanus',
+    emoji: '🐛',
+    attrs: {
+      comprimento_cm: 5.5,
+      peso_g: 2,
+      ovos_por_postura: 150,
+      tempo_ate_adulto_dias: 60,
+      expectativa_vida_dias: 365
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Giant_Water_Bug_or_%22Toe_Biter%22_(44012191802).jpg',
+      author: 'Glacier National Park (NPS)',
+      license: 'Domínio público'
+    },
+    sound: null,
+    wikipediaUrl: 'https://en.wikipedia.org/wiki/Lethocerus_americanus',
+    info: {
+      habitat: 'Lagoas, lagos e rios de fluxo lento na América do Norte, geralmente entre vegetação aquática.',
+      alimentacao: 'Predador voraz: captura insetos aquáticos, girinos, peixes pequenos e até anfíbios.',
+      comportamento: 'Conhecido como "toe biter" por poder dar uma mordida dolorosa quando manuseado.',
+      conservacao: 'Não avaliada pela IUCN; comum em sua área de distribuição na América do Norte.',
+      curiosidades: [
+        'É um dos maiores insetos aquáticos da América do Norte.',
+        'Em algumas espécies do gênero, o macho carrega os ovos nas costas até eclodirem.',
+        "Pode voar longas distâncias à noite em busca de novos corpos d'água.",
+        'Quando se sente ameaçado, finge-se de morto ou usa a mordida como defesa.',
+        'É popularmente chamado de "electric light bug" por ser atraído por luzes artificiais.'
+      ],
+      fontes: 'Wikipedia (EN), UMN Entomology, NPS. Peso e tempo até adulto são estimativas.'
+    }
+  },
+  {
+    id: 'pulga_gato',
+    name: 'Pulga-do-gato',
+    species: 'Ctenocephalides felis',
+    emoji: '🐜',
+    attrs: {
+      comprimento_cm: 0.2,
+      peso_g: 0.0005,
+      ovos_por_postura: 40,
+      tempo_ate_adulto_dias: 25,
+      expectativa_vida_dias: 100
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Ctenocephalides_felis,_adulte..jpg',
+      author: 'Auguste Le Roux',
+      license: 'CC BY-SA 3.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Ctenocephalides_felis',
+    info: {
+      habitat: 'Distribuição mundial; vive na pelagem de gatos, cães e outros mamíferos domésticos e silvestres.',
+      alimentacao: 'Alimenta-se exclusivamente de sangue de hospedeiros mamíferos.',
+      comportamento: 'Corpo achatado lateralmente e pernas traseiras adaptadas para saltos potentes.',
+      conservacao: 'Não avaliada pela IUCN; espécie extremamente comum e considerada praga veterinária e doméstica em todo o mundo.',
+      curiosidades: [
+        'Consegue saltar dezenas de vezes o próprio comprimento do corpo.',
+        'Pode transmitir a tênia (Dipylidium caninum) e outras doenças a pets e humanos.',
+        'As larvas evitam a luz e se alimentam de fezes de pulgas adultas ricas em sangue.',
+        'Apesar do nome, também infesta cães, coelhos e outros mamíferos.',
+        'O casulo da pupa pode ficar "dormente" por meses esperando vibração ou calor de um hospedeiro.'
+      ],
+      fontes: 'UF/IFAS EENY-011, University of Georgia IPM, Merck Veterinary Manual. Peso é estimativa.'
+    }
+  },
+  {
+    id: 'bicho_da_seda',
+    name: 'Bicho-da-seda',
+    species: 'Bombyx mori',
+    emoji: '🦋',
+    attrs: {
+      comprimento_cm: 2.5,
+      peso_g: 1,
+      ovos_por_postura: 350,
+      tempo_ate_adulto_dias: 45,
+      expectativa_vida_dias: 6
+    },
+    image: {
+      url: 'https://commons.wikimedia.org/wiki/Special:FilePath/CSIRO_ScienceImage_10746_An_adult_silkworm_moth.jpg',
+      author: 'CSIRO',
+      license: 'CC BY 3.0'
+    },
+    sound: null,
+    wikipediaUrl: 'https://pt.wikipedia.org/wiki/Bombyx_mori',
+    info: {
+      habitat: 'Espécie inteiramente domesticada, sem população selvagem conhecida; criada em cativeiro há milhares de anos na China.',
+      alimentacao: 'As larvas se alimentam quase exclusivamente de folhas de amoreira; os adultos não se alimentam.',
+      comportamento: 'A lagarta tece um casulo de fio de seda contínuo antes de virar pupa; o adulto perdeu a capacidade de voar.',
+      conservacao: 'Não avaliada pela IUCN por ser espécie domesticada; não existe mais na natureza de forma selvagem.',
+      curiosidades: [
+        'Um único casulo pode conter um fio de seda contínuo de centenas de metros.',
+        'A domesticação do bicho-da-seda começou há mais de 5.000 anos na China.',
+        'A lagarta pode multiplicar seu peso por milhares de vezes entre a eclosão e a fase adulta.',
+        'A mariposa adulta não voa e vive poucos dias, apenas para acasalar e pôr ovos.',
+        'A espécie selvagem ancestral é a mariposa Bombyx mandarina, do leste asiático.'
+      ],
+      fontes: 'Wikipedia PT, Animal Diversity Web, agriculture.institute, Biology Ease. Peso do adulto é estimativa.'
+    }
+  }
+]
+  }
 };
 const DEFAULT_THEME_ID = 'selvagem';
 function currentTheme(){ return THEMES[state.themeId] || THEMES[DEFAULT_THEME_ID]; }
